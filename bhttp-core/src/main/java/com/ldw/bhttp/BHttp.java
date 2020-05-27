@@ -19,6 +19,7 @@ import com.ldw.bhttp.annotation.POST;
 import com.ldw.bhttp.annotation.Query;
 import com.ldw.bhttp.callback.Consumer;
 import com.ldw.bhttp.callback.Observer;
+import com.ldw.bhttp.httpsend.HttpSend;
 import com.ldw.bhttp.param.Param;
 import com.ldw.bhttp.parse.Parse;
 import com.ldw.bhttp.ssl.SSLSocketFactoryImpl;
@@ -122,6 +123,40 @@ public class BHttp<T> {
         if (isRetrofit)
             loadService(method, args);
     }
+
+    public BHttp() {
+
+    }
+    //###########################################请求方法相关#################################################################
+
+    @NotNull
+    public  static  Param postFrom(@NotNull String s) {
+        return new Param();
+    }
+
+
+   /* static class Factory<D> {
+        @NotNull
+        public Factory add(String k, Object v) {
+            return this;
+        }
+
+        @NotNull
+        public <D> HttpSend<D> asObject(Class<?> tClass) {
+
+            return new HttpSend<D>();
+        }
+
+        public  void subscribe(final Observer<D> observer) {
+
+
+        }
+    }*/
+
+
+
+    //#############################################################################################################################
+
 
     //###########################################参数解析相关方法#################################################################
 
@@ -237,7 +272,7 @@ public class BHttp<T> {
             }
         }
     }
-    //###############################################参数解析END#################################################################
+    //#############################################################################################################################
 
 
     //###############################################生命周期相关方法#################################################################
@@ -285,7 +320,7 @@ public class BHttp<T> {
         to(fragment.getLifecycle());
         return this;
     }
-    //###############################################生命周期END#################################################################
+    //############################################################################################################################
 
 
     public void subscribe(final Observer<T> observer) {
@@ -383,6 +418,5 @@ public class BHttp<T> {
     public static void setDebug(boolean b) {
         LogUtils.setDebug(b);
     }
-
 
 }

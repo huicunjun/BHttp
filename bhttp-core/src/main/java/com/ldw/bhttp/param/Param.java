@@ -6,7 +6,10 @@ import android.media.browse.MediaBrowser;
 import androidx.lifecycle.Lifecycle;
 
 import com.ldw.bhttp.BHttp;
+import com.ldw.bhttp.httpsend.HttpSend;
 import com.ldw.bhttp.parse.Parse;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 
@@ -20,7 +23,7 @@ import okhttp3.RequestBody;
  */
 public class Param {
     Request.Builder builder = new Request.Builder();
-    HashMap<String, Object> hashMap = new HashMap<>();
+    private HashMap<String, Object> hashMap = new HashMap<>();
     Method method;
 
     String domain = null;
@@ -43,7 +46,7 @@ public class Param {
 
     private String getFinalUrl() {
         if (url.startsWith("http://") || url.startsWith("https://")) {
-           return url;
+            return url;
         } else {
             if (domain == null) {
                 domain = BHttp.getDefaultDomain();
@@ -54,7 +57,7 @@ public class Param {
 
     public void addQuery(String k, String v, boolean isEncode) {
         if (httpUrlbuilder == null) {
-            httpUrlbuilder =  HttpUrl.parse(getFinalUrl()).newBuilder();
+            httpUrlbuilder = HttpUrl.parse(getFinalUrl()).newBuilder();
         }
         if (isEncode) {
             httpUrlbuilder.addEncodedQueryParameter(k, v);
@@ -79,5 +82,23 @@ public class Param {
             builder.post(RequestBody.create("", null));
         }
         return builder.build();
+    }
+
+    @NotNull
+    public Param add(String k, Object v) {
+        addParam(k, v);
+        return this;
+    }
+
+    public <T> HttpSend<T> asObject(Class<T> tClass) {
+        return new HttpSend<>(this, tClass);
+    }
+
+    public  HttpSend<String> asString() {
+        return new HttpSend<>(this, String.class);
+    }
+
+    public void addParam(String k, Object v) {
+        hashMap.put(k, v);
     }
 }

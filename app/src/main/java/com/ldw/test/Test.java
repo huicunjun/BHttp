@@ -3,7 +3,6 @@ package com.ldw.test;
 import androidx.annotation.NonNull;
 
 import com.ldw.bhttp.BHttp;
-import com.ldw.bhttp.callback.Consumer;
 import com.ldw.bhttp.callback.Observer;
 
 /**
@@ -12,16 +11,27 @@ import com.ldw.bhttp.callback.Observer;
  */
 public class Test {
     public static void main(String[] args) {
-        BHttp.create(ApiService.class)
-                .test("3")
-                .subscribe(new Consumer<Response<String>>() {
+        BHttp.postFrom("")
+                .add("id","sss")
+                .asObject(Response.class)
+                .subscribe(new Observer<Response>() {
                     @Override
-                    public void accept(Response<String> stringResponse) {
+                    public void onSubscribe() {
 
                     }
-                }, new Consumer<Throwable>() {
+
                     @Override
-                    public void accept(Throwable throwable) {
+                    public void onNext(@NonNull Response response) {
+
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
 
                     }
                 });
