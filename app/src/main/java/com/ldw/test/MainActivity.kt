@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity() {
     }
     fun download(view: View) {
         BHttp.create(ApiService::class.java)
-            .download("2623335243")
+            .download("26233")
             .to(this)
             .subscribe(object : Observer<Response<String?>> {
                 override fun onSubscribe() {
