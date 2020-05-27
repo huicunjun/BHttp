@@ -1,6 +1,7 @@
 package com.ldw.okhttp_bhttp
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
 
@@ -32,7 +33,7 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     override fun onError(e: Throwable) {
-                        println(e.message)
+                        Toast.makeText(this@MainActivity,e.message, Toast.LENGTH_SHORT).show()
                     }
 
                     override fun onComplete() {

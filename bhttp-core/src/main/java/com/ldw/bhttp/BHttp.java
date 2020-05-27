@@ -135,7 +135,7 @@ public class BHttp<T> {
                         Type returnType = method.getGenericReturnType();
                         BHttp<?> result = serviceMethodCache.get(method);
                         if (result != null) {
-                            System.out.println("缓存读取");
+                            LogUtils.logd("缓存读取");
                             result.reLoadParam(method, args);
                             return result;
                         }
@@ -291,18 +291,24 @@ public class BHttp<T> {
     public void subscribe(final Observer<T> observer) {
         //parse = new Parse<>(method);
         observer.onSubscribe();
-
-
         call = getOkHttpClient().newCall(param.getRequest());
         if (state == state_OK) {
             call.enqueue(new Callback() {
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                    if (e.getMessage().toString().contains("Close")) {
+                    if (e.getMessage().contains("Close")) {
                         return;
                     }
-                    if (state == state_OK)
-                        observer.onError(e);
+                    if (state == state_OK) {
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                observer.onError(e);
+                                observer.onComplete();
+                            }
+                        });
+                    }
+                    LogUtils.logd(e.getMessage());
                 }
 
                 @Override
@@ -317,12 +323,8 @@ public class BHttp<T> {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            try {
-                                observer.onNext(convert);
-                                observer.onComplete();
-                            } catch (Exception e) {
-                                observer.onError(e);
-                            }
+                            observer.onNext(convert);
+                            observer.onComplete();
                         }
                     });
                     // onNext.accept();
