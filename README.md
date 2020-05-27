@@ -4,8 +4,8 @@
 
 ### 简介
 
-本项目是一个不依赖Retrofit和Rxjava，但实现了Retrofit的声明式Api，以及Rxjava的链式调用线程自动切换，
-功能涵盖请求缓存，请求加密，公共参数，Token时效，自定义解析数据等。具有以下特点：
+本项目不依赖Retrofit和Rxjava，但实现了Retrofit的声明式Api，以及Rxjava的链式调用线程自动切换，
+功能涵盖请求缓存，请求加密，公共参数，Token时效，自定义解析数据等功能。具有以下特点：
 
 * 快：方法封装极简，链式调用一气呵成。
 * 全：既可以使用单独的链式请求，也可以使用Retrofit的声明式接口写法。
@@ -37,7 +37,7 @@ implementation 'com.github.huicunjun:BHttp:lastversion'
         }
 
        BHttp.create(ApiService.class)
-                .login("hello")
+                .test("hello")
                 .to(this)//监听生命周期，页面销毁自动结束请求
                 .subscribe(stringResponse -> {
                    //请求完成回调，这里是主线程，直接UI操作
