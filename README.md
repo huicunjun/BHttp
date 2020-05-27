@@ -61,6 +61,16 @@ implementation 'com.github.huicunjun:BHttp:lastversion'
                     }
                 });
 
+<h1>仅回调成功与失败</h1>
+       BHttp.create(ApiService.class)
+                .login("hello")
+                .to(this)//监听生命周期，页面销毁自动结束请求
+                .subscribe(stringResponse -> {
+                   //请求完成回调，这里是主线程，直接UI操作
+                 }, throwable -> {
+                   //请求时出现错误回调，这里是主线程        
+                 });
+
 ```
 
 ### 4.  链式调用
@@ -91,6 +101,16 @@ implementation 'com.github.huicunjun:BHttp:lastversion'
                         //请求结束回调，这里是主线程（不管失败与否，最终都会执行改方法！）
                     }
                 });
+<h1>仅回调成功与失败</h1>
+       BHttp.postJson("login")
+                .add("id","123")
+                .to(this)//监听生命周期，页面销毁自动结束请求
+                .asResponse(String.class)
+                .subscribe(stringResponse -> {
+                   //请求完成回调，这里是主线程，直接UI操作
+                 }, throwable -> {
+                   //请求时出现错误回调，这里是主线程        
+                 });
 
 ```
 ### 关于项目
