@@ -1,5 +1,4 @@
-[![](https://jitpack.io/v/huicunjun/BHttp.svg)](https://jitpack.io/#huicunjun/BHttp)
-## BHttp·一个极简Http库
+# BHttp·极简Http库
 
 <img src="https://v1.jinrishici.com/all.svg">
 
@@ -17,8 +16,9 @@
 
 ### 开始使用
 
-1. 根据 Gradle依赖
+## 1. 根据 Gradle依赖
+ [![](https://jitpack.io/v/huicunjun/BHttp.svg)](https://jitpack.io/#huicunjun/BHttp)
 
 
 ### 关于项目
-本项目一直是个人自用网络请求库。之前未尝试单独剥离出来。观摩了RxHttp有感，发现请求三部曲非常棒，能做到上手成本低，功能全，这点令我非常激动！于是乎有感而发，打算将自己的网络请求库也封装成这样！
+本项目一直是个人自用网络请求库。之前未尝试单独剥离出来。观摩了RxHttp有感，发现请求三部曲非常棒，能做到上手成本低，功能全，这点令我非常激动！于是乎有感而作！
