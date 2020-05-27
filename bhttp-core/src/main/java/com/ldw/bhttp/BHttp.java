@@ -17,6 +17,7 @@ import androidx.lifecycle.LifecycleOwner;
 import com.ldw.bhttp.annotation.GET;
 import com.ldw.bhttp.annotation.POST;
 import com.ldw.bhttp.annotation.Query;
+import com.ldw.bhttp.callback.Consumer;
 import com.ldw.bhttp.callback.Observer;
 import com.ldw.bhttp.param.Param;
 import com.ldw.bhttp.parse.Parse;
@@ -122,7 +123,7 @@ public class BHttp<T> {
             loadService(method, args);
     }
 
-    //###########################################参数解析#################################################################
+    //###########################################参数解析相关方法#################################################################
 
     @SuppressWarnings("unchecked")
     public static <T> T create(final Class<T> service) {
@@ -222,8 +223,7 @@ public class BHttp<T> {
     }
 
     /**
-     * 第二次调用时候
-     * 重新加载参数行，避免重新反射查询不必要的值
+     * 重新加载参数，避免重新反射查询不必要的值
      */
     private void reLoadParam(Method method, Object[] args) {
         param.reload();
@@ -240,7 +240,7 @@ public class BHttp<T> {
     //###############################################参数解析END#################################################################
 
 
-    //###############################################生命周期#################################################################
+    //###############################################生命周期相关方法#################################################################
     private void addLifeLis(Lifecycle lifecycle) {
         lifecycle.addObserver(new LifecycleEventObserver() {
             @Override
@@ -334,24 +334,52 @@ public class BHttp<T> {
     }
 
 
+    public void subscribe(Consumer<T> onNext, Consumer<? super Throwable> onError) {
+        call = getOkHttpClient().newCall(param.getRequest());
+        if (state == state_OK) {
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    if (e.getMessage().contains("Close")) {
+                        return;
+                    }
+                    if (state == state_OK) {
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                onError.accept(e);
+                            }
+                        });
+                    }
+                    LogUtils.logd(e.getMessage());
+                }
 
-/*    public void subscribe(Consumer<? extends T> onNext, Consumer<? super Throwable> onError) {
-        parse = new Parse<>(method);
-        getOkHttpClient().newCall(param.getRequest()).enqueue(new Callback() {
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                onError.accept(e);
-            }
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    if (state != state_OK)
+                        return;
+                    parse = new Parse<>();
+                    String s = response.body().string();
+                    final T convert = (T) parse.convert(returnType, s);
+                    LogUtils.logd("convert");
+                    LogUtils.logd(response);
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            onNext.accept(convert);
+                        }
+                    });
+                }
+            });
+        }
 
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                parse.subscribe(onNext, onError);
-                // onNext.accept();
-            }
-        });
+    }
 
-    }*/
-
+    /**
+     * 开启Debug模式
+     *
+     * @param b
+     */
     public static void setDebug(boolean b) {
         LogUtils.setDebug(b);
     }
