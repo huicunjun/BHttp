@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
 
     fun get(view: View) {
         BHttp.create(ApiService::class.java)
-            .test("26233")
+            .test("2626633")
             .to(this)
             .subscribe({
                 ed.append(it.toString())
@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
 
     fun post(view: View) {
         BHttp.create(ApiService::class.java)
-            .test("26233")
+            .test("264366433233")
             .to(this)
             .subscribe(object : Observer<Response<String?>> {
                 override fun onSubscribe() {
