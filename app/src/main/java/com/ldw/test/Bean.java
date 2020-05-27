@@ -13,10 +13,7 @@ public class Bean {
                 '}';
     }
 
-    /**
-     * token : eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxIiwiZXhwIjoxNTkwNzk2MTY2LCJpYXQiOjE1OTA1MzY5NjZ9.JfPe8YG8MNHNvcVWrTYpNi5h5nw5agDcg_lIKtt63wE
-     * user : {"id":1,"nickname":"神奇校园官方","signature":"年轻的你只如云影掠过","state":"正常","txurl":"3221b281ff6447909cab0e67c97af51a1585630697026867.png","city":null,"experience":29172,"grade":7,"registrationid":"140fe1da9ec01633101","postCount":0,"fansCount":0,"attentionCount":0,"stuname":null,"classname":null,"department":null,"specialty":null,"fans":false,"student":{"id":3,"userid":1,"stuid":"1711605043","stupass":"440981199906226832","stuname":"李涤威","classname":"移动172","department":"信息工程系","specialty":"移动应用开发","idcard":"440981199906226832","birth":null,"entrydate":"2017-9-9","img":null,"sex":"男","home":"茂名高州","xz":"3"}}
-     */
+
 
     private String token;
     private UserBean user;
@@ -61,27 +58,6 @@ public class Bean {
                     ", student=" + student +
                     '}';
         }
-
-        /**
-         * id : 1
-         * nickname : 神奇校园官方
-         * signature : 年轻的你只如云影掠过
-         * state : 正常
-         * txurl : 3221b281ff6447909cab0e67c97af51a1585630697026867.png
-         * city : null
-         * experience : 29172
-         * grade : 7
-         * registrationid : 140fe1da9ec01633101
-         * postCount : 0
-         * fansCount : 0
-         * attentionCount : 0
-         * stuname : null
-         * classname : null
-         * department : null
-         * specialty : null
-         * fans : false
-         * student : {"id":3,"userid":1,"stuid":"1711605043","stupass":"440981199906226832","stuname":"李涤威","classname":"移动172","department":"信息工程系","specialty":"移动应用开发","idcard":"440981199906226832","birth":null,"entrydate":"2017-9-9","img":null,"sex":"男","home":"茂名高州","xz":"3"}
-         */
 
         private int id;
         private String nickname;
@@ -247,23 +223,7 @@ public class Bean {
         }
 
         public static class StudentBean {
-            /**
-             * id : 3
-             * userid : 1
-             * stuid : 1711605043
-             * stupass : 440981199906226832
-             * stuname : 李涤威
-             * classname : 移动172
-             * department : 信息工程系
-             * specialty : 移动应用开发
-             * idcard : 440981199906226832
-             * birth : null
-             * entrydate : 2017-9-9
-             * img : null
-             * sex : 男
-             * home : 茂名高州
-             * xz : 3
-             */
+
 
             private int id;
             private int userid;

@@ -6,9 +6,8 @@ import okhttp3.internal.cache.DiskLruCache;
 import okhttp3.internal.io.FileSystem;
 
 /**
- * User: ljx
- * Date: 2020/5/16
- * Time: 23:57
+ * @date 2020/5/23 11:15
+ * 威威君
  */
 public class DiskLruCacheFactory {
 

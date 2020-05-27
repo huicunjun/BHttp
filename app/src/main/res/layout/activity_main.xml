@@ -2,18 +2,40 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="#000000"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <Button
-        android:text="POST"
-        android:id="@+id/t"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    android:orientation="horizontal">
+
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <Button
+            android:id="@+id/clear"
+            android:onClick="clear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="清空" />
+        <Button
+            android:id="@+id/get"
+            android:onClick="get"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="GET" />
+
+        <Button
+            android:id="@+id/post"
+            android:onClick="post"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="POST" />
+    </LinearLayout>
+
     <EditText
-        android:textColor="#FFFFFF"
+        android:gravity="top"
         android:id="@+id/ed"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:textColor="#FFFFFF" />
 </LinearLayout>

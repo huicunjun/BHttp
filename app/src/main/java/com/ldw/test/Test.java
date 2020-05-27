@@ -2,10 +2,8 @@ package com.ldw.test;
 
 import androidx.annotation.NonNull;
 
-import com.ldw.bhttp.ApiService;
 import com.ldw.bhttp.BHttp;
 import com.ldw.bhttp.callback.Observer;
-import com.ldw.bhttp.parse.MyResponse;
 
 /**
  * @date 2020/5/26 19:08
@@ -14,15 +12,15 @@ import com.ldw.bhttp.parse.MyResponse;
 public class Test {
     public static void main(String[] args) {
         BHttp.create(ApiService.class)
-                .login("3")
-                .subscribe(new Observer<MyResponse<String>>() {
+                .test("3")
+                .subscribe(new Observer<Response<String>>() {
                     @Override
                     public void onSubscribe() {
 
                     }
 
                     @Override
-                    public void onNext(@NonNull MyResponse<String> stringMyResponse) {
+                    public void onNext(@NonNull Response<String> stringMyResponse) {
 
                     }
 

@@ -1,12 +1,13 @@
-package com.ldw.bhttp.parse;
+package com.ldw.test;
 
 /**
- * @date 2020/5/23 11:20
+ * @date 2020/5/27 14:44
+ * @user 威威君
  */
-public class MyResponse<D> {
+public class Response<D> {
     public int code;
     public String msg;
-    public  D data;
+    public D data;
 
     @Override
     public String toString() {
