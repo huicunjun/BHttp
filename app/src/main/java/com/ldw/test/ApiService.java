@@ -1,4 +1,4 @@
-package com.ldw.okhttp_bhttp;
+package com.ldw.test;
 
 import com.ldw.bhttp.BHttp;
 import com.ldw.bhttp.annotation.GET;

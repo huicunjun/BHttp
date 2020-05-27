@@ -1,4 +1,4 @@
-package com.ldw.okhttp_bhttp
+package com.ldw.test
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
