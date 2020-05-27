@@ -3,5 +3,5 @@
 
 本项目是本人观摩RxHttp源码后，觉得非常不错，有感而开发本项目，与之区别是，除Okhttp，不依赖Refrofit，Rxjava，即可实现链式调用，线程切换，生命周期感知，缓存等功能。
 
-Gradle依赖
+
 [![](https://jitpack.io/v/huicunjun/BHttp.svg)](https://jitpack.io/#huicunjun/BHttp)
