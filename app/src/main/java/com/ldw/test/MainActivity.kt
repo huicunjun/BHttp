@@ -55,9 +55,10 @@ class MainActivity : AppCompatActivity() {
                 }
             })
     }
+
     fun download(view: View) {
         BHttp.create(ApiService::class.java)
-            .download("262sdd37473")
+            .download("test")
             .to(this)
             .subscribe(object : Observer<Response<String?>> {
                 override fun onSubscribe() {
@@ -78,6 +79,7 @@ class MainActivity : AppCompatActivity() {
                 }
             })
     }
+
     fun clear(view: View) {
         ed.setText("")
     }
