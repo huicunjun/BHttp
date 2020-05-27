@@ -28,7 +28,7 @@ implementation 'com.github.huicunjun:BHttp:lastversion'
         BHttp.setDebug(true);//开启debug
         BHttp.setDefaultDomain("http://192.168.1.3:8022/");//设置默认请求域名
 ```
-### 3.  Retrofit式使用调用
+### 3.  Retrofit式调用
 
 ```html
         public interface ApiService {
@@ -39,6 +39,37 @@ implementation 'com.github.huicunjun:BHttp:lastversion'
        BHttp.create(ApiService.class)
                 .test("hello")
                 .to(this)//监听生命周期，页面销毁自动结束请求
+                .subscribe(new Observer<Response<String>>() {
+                    @Override
+                    public void onSubscribe() {
+                        //请求前执行的逻辑，这里是主线程
+                    }
+
+                    @Override
+                    public void onNext(@NonNull Response<String> stringResponse) {
+                        //请求完成回调，这里是主线程，直接UI操作
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e1) {
+                        //请求时出现错误回调，这里是主线程
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        //请求结束回调，这里是主线程（不管失败与否，最终都会执行改方法！）
+                    }
+                });
+
+```
+
+### 4.  链式调用
+```html
+   
+       BHttp.postJson("login")
+                .add("id","123")
+                .to(this)//监听生命周期，页面销毁自动结束请求
+                .asResponse(String.class)
                 .subscribe(new Observer<Response<String>>() {
                     @Override
                     public void onSubscribe() {
