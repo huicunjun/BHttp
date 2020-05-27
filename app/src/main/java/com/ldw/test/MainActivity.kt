@@ -30,12 +30,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun post(view: View) {
-        BHttp.postJson("http://192.168.1.3:8022//test/")
+        AHttp.postJson("http://192.168.1.3:8022//test/")
             .add("id", "11")
-            .asObject(Response::class.java)
+            .asResponse(String::class.java)
             .subscribe(object : Observer<Response<*>> {
                 override fun onSubscribe() {}
-                override fun onNext(response: Response<*>) {}
+                override fun onNext(response: Response<*>) {
+                    val data = response.data
+                }
                 override fun onError(e: Throwable) {}
                 override fun onComplete() {}
             })

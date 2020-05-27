@@ -3,6 +3,7 @@ package com.ldw.test;
 import androidx.annotation.NonNull;
 
 import com.ldw.bhttp.BHttp;
+import com.ldw.bhttp.callback.Consumer;
 import com.ldw.bhttp.callback.Observer;
 
 /**
@@ -11,17 +12,17 @@ import com.ldw.bhttp.callback.Observer;
  */
 public class Test {
     public static void main(String[] args) {
-        BHttp.postJson("")
+        AHttp.postJson("")
                 .add("id","sss")
-                //.asResponse(String.class)
-                .subscribe(new Observer<Response>() {
+                .asResponse(String.class)
+                .subscribe(new Observer() {
                     @Override
                     public void onSubscribe() {
 
                     }
 
                     @Override
-                    public void onNext(@NonNull Response response) {
+                    public void onNext(@NonNull Object o) {
 
                     }
 
@@ -57,6 +58,21 @@ public class Test {
 
                     @Override
                     public void onComplete() {
+
+                    }
+                });
+
+
+        BHttp.create(ApiService.class)
+                .login("")
+                .subscribe(new Consumer<Response<Bean>>() {
+                    @Override
+                    public void accept(Response<Bean> beanResponse) {
+
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) {
 
                     }
                 });

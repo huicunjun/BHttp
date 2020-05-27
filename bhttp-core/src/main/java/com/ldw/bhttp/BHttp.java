@@ -149,10 +149,13 @@ public class BHttp<T> {
     }
 
     @NotNull
-    public HttpSend<T> asObject(Class<T> tClass) {
+    public  HttpSend<T> asObject(Class<T> tClass) {
         return new HttpSend<T>(param, tClass);
     }
-
+    @NotNull
+    public  HttpSend<T> asResponse(Class<T> tClass) {
+        return new HttpSend<T>(param, tClass);
+    }
    /* static class Factory<D> {
         @NotNull
         public Factory add(String k, Object v) {
