@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun post(view: View) {
-        BHttp.postFrom("http://192.168.1.3:8022//test/")
+        BHttp.postJson("http://192.168.1.3:8022//test/")
             .add("id", "11")
             .asObject(Response::class.java)
             .subscribe(object : Observer<Response<*>> {

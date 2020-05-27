@@ -101,6 +101,10 @@ public class BHttp<T> {
         BHttp.defaultDomain = defaultDomain;
     }
 
+    public Param getParam() {
+        return param;
+    }
+
     public static String getDefaultDomain() {
         return defaultDomain;
     }
@@ -130,10 +134,24 @@ public class BHttp<T> {
     //###########################################请求方法相关#################################################################
 
     @NotNull
-    public  static  Param postFrom(@NotNull String s) {
+    public static Param postFrom(@NotNull String s) {
         return new Param();
     }
 
+    @NotNull
+    public static BHttp postJson(@NotNull String s) {
+        return new BHttp();
+    }
+
+    @NotNull
+    public BHttp add(String k, Object v) {
+        return this;
+    }
+
+    @NotNull
+    public HttpSend<T> asObject(Class<T> tClass) {
+        return new HttpSend<T>(param, tClass);
+    }
 
    /* static class Factory<D> {
         @NotNull
@@ -152,7 +170,6 @@ public class BHttp<T> {
 
         }
     }*/
-
 
 
     //#############################################################################################################################

@@ -11,6 +11,31 @@ import com.ldw.bhttp.callback.Observer;
  */
 public class Test {
     public static void main(String[] args) {
+        BHttp.postJson("")
+                .add("id","sss")
+                //.asResponse(String.class)
+                .subscribe(new Observer<Response>() {
+                    @Override
+                    public void onSubscribe() {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull Response response) {
+
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+
         BHttp.postFrom("")
                 .add("id","sss")
                 .asObject(Response.class)

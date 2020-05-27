@@ -1,13 +1,8 @@
 package com.ldw.bhttp.param;
 
 
-import android.media.browse.MediaBrowser;
-
-import androidx.lifecycle.Lifecycle;
-
 import com.ldw.bhttp.BHttp;
 import com.ldw.bhttp.httpsend.HttpSend;
-import com.ldw.bhttp.parse.Parse;
 
 import org.jetbrains.annotations.NotNull;
 
