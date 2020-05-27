@@ -62,4 +62,4 @@ implementation 'com.github.huicunjun:BHttp:lastversion'
 
 ```
 ### 关于项目
-本项目一直是个人自用网络请求库。之前未尝试单独剥离出来。观摩了[https://v1.jinrishici.com/log](RxHttp)有感，发现请求三部曲非常棒，能做到上手成本低，功能全，这点令我非常激动！于是乎有感而作！
+本项目一直是个人自用网络请求库。之前未尝试单独剥离出来。观摩了[RxHttp](https://v1.jinrishici.com/log)有感，发现请求三部曲非常棒，能做到上手成本低，功能全，这点令我非常激动！于是乎有感而作！
