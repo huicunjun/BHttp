@@ -340,7 +340,7 @@ public class BHttp<T> {
             call.enqueue(new Callback() {
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                    if (e.getMessage().contains("Close")) {
+                    if (e.getMessage().contains("close")) {
                         return;
                     }
                     if (state == state_OK) {
