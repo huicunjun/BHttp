@@ -1,110 +1,3 @@
-package com.ldw.bhttp.compiler
-
-import com.ldw.bhttp.annotation.DefaultDomain
-import com.squareup.javapoet.JavaFile
-import com.squareup.javapoet.MethodSpec
-import com.squareup.javapoet.TypeSpec
-import java.io.BufferedWriter
-import java.io.IOException
-import java.io.OutputStreamWriter
-import java.nio.charset.StandardCharsets
-import java.util.*
-import javax.annotation.processing.AbstractProcessor
-import javax.annotation.processing.Filer
-import javax.annotation.processing.ProcessingEnvironment
-import javax.annotation.processing.RoundEnvironment
-import javax.lang.model.element.Modifier
-import javax.lang.model.element.TypeElement
-
-/**
- * @date 2020/5/28 10:23
- * @user 威威君
- */
-class KotlinProcessor : AbstractProcessor() {
-    var filer: Filer? = null
-
-    @Synchronized
-    override fun init(processingEnv: ProcessingEnvironment) {
-        super.init(processingEnv)
-        filer = processingEnv.filer
-        val map = processingEnv.options
-        className = map["bhttp_name"] ?: "BHttp"
-        packname = map["package_name"] ?: "com.bhttp.wrapper.generator"
-    }
-
-    override fun process(
-        annotations: MutableSet<out TypeElement>?,
-        roundEnv: RoundEnvironment?
-    ): Boolean {
-        try {
-            generate()
-            createByString(roundEnv!!)
-        } catch (e: IOException) {
-            e.printStackTrace()
-            println(e.message)
-        }
-
-        return true
-    }
-
-    @Throws(IOException::class)
-    private fun generate() {
-        val main = MethodSpec.methodBuilder("main")
-            .addModifiers(
-                Modifier.PUBLIC,
-                Modifier.STATIC
-            )
-            .addParameter(Array<String>::class.java, "args")
-            .addStatement("\$T.out.println(\$S)", System::class.java, "Hello World")
-            .addStatement("System.out.println(\$S)", "Hello World")
-            .build()
-        val typeSpec =
-            TypeSpec.classBuilder("HelloWorld")
-                .addModifiers(
-                    Modifier.FINAL,
-                    Modifier.PUBLIC
-                )
-                .addMethod(main)
-                .build()
-        val javaFile = JavaFile.builder("com.bhttp.wrapper.generator", typeSpec)
-            .build()
-        javaFile.writeTo(filer)
-    }
-
-    private fun createByString(roundEnv: RoundEnvironment) {
-        for (element in roundEnv.getElementsAnnotatedWith(
-            DefaultDomain::class.java)) {
-            val objectType = element.simpleName.toString()
-        }
-        try {
-            val source = processingEnv.filer.createSourceFile("$packname.$className")
-            val outputStream = source.openOutputStream()
-            val osr = OutputStreamWriter(outputStream, StandardCharsets.UTF_8)
-            val bufferedWriter = BufferedWriter(osr)
-            bufferedWriter.write(replaceClass(ss))
-            bufferedWriter.flush()
-            bufferedWriter.close()
-        } catch (e: IOException) {
-        }
-    }
-
-
-    override fun getSupportedAnnotationTypes(): Set<String>? {
-        val annotations: MutableSet<String> =
-            HashSet()
-        annotations.add(DefaultDomain::class.java.canonicalName)
-        return annotations
-    }
-
-    companion object {
-        var className: String? = "BHttp"
-        var packname : String? = "com.bhttp.wrapper.generator"
-        private fun replaceClass(ss: String): String {
-           return ss.replace("BaseHttp","$className").replace("package com.ldw.bhttp;", "package $packname;")
-        }
-
-       // var data = SimpleDateFormat().format("yyyy/MM/dd HH:ss")//2020/5/26 19:10
-        var ss = """
 package com.ldw.bhttp;
 
 import android.app.Activity;
@@ -121,6 +14,7 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleEventObserver;
 import androidx.lifecycle.LifecycleOwner;
 
+import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.ldw.bhttp.annotation.GET;
 import com.ldw.bhttp.annotation.POST;
@@ -174,6 +68,7 @@ public class OkHttp<T> {
     private static final int state_OK = 0;
     private static final int state_cancel = 1;
     private static final int MSG_ON_DESTROY = 666;
+    private Class<?> tClass;
 
     private static OkHttpClient getOkHttpClient() {
         if (okHttpClient == null) {
@@ -241,10 +136,11 @@ public class OkHttp<T> {
     }*/
 
     @NotNull
-    public static  OkHttp<?> postJson(String url) {
-        OkHttp<Object> client = new OkHttp<>();
+    public static OkHttp<?> postJson(String url) {
+        OkHttp<?> client = new OkHttp<>();
         client.param.setUrl(url);
-        return new OkHttp<>();
+        client.param.setMethod(com.ldw.bhttp.param.Method.POST);
+        return client;
     }
 
     @NotNull
@@ -256,15 +152,16 @@ public class OkHttp<T> {
 
     @NotNull
     @SuppressWarnings("unchecked")
-    public  <D> OkHttp<D> asObject(Class<D> tClass) {
-        returnType = new TypeToken<D>() {
-        }.getType();
+    public <D> OkHttp<D> asObject(Class<D> tClass) {
+        // returnType = new TypeToken<D>() {}.getType();
+        this.tClass = tClass;
         return (OkHttp<D>) this;
     }
 
     @NotNull
     @SuppressWarnings("unchecked")
     public <D> OkHttp<MyResponse<D>> asResponse(Class<D> tClass) {
+        this.tClass = tClass;
         returnType = new TypeToken<MyResponse<D>>() {
         }.getType();
         return (OkHttp<MyResponse<D>>) this;
@@ -438,17 +335,24 @@ public class OkHttp<T> {
                         return;
                     parse = new Parse<>();
                     String s = response.body().string();
-                    final T convert = (T) parse.convert(returnType, s);
+                    T convert = null;
+                    if (returnType != null && tClass != null) {
+                        convert = new Gson().fromJson(s, new ParameterizedTypeImpl(MyResponse.class, tClass));
+                    } else if (returnType != null) {
+                        convert = (T) parse.convert(returnType, s);
+                    } else if (tClass != null) {
+                        convert = (T) parse.convert(tClass, s);
+                    }
                     LogUtils.logd("convert");
                     LogUtils.logd(response);
+                    T finalConvert = convert;
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            observer.onNext(convert);
+                            observer.onNext(finalConvert);
                             observer.onComplete();
                         }
                     });
-                    // onNext.accept();
                 }
             });
         }
@@ -481,13 +385,22 @@ public class OkHttp<T> {
                         return;
                     parse = new Parse<>();
                     String s = response.body().string();
-                    final T convert = (T) parse.convert(returnType, s);
+                    T convert = null;
+                    if (returnType != null && tClass != null) {
+                        convert = new Gson().fromJson(s, new ParameterizedTypeImpl(MyResponse.class, tClass));
+                    } else if (returnType != null) {
+                        convert = (T) parse.convert(returnType, s);
+                    } else if (tClass != null) {
+                        convert = (T) parse.convert(tClass, s);
+                    }
+                    //Response<A> responseA = fromJson(result, new ParameterizedTypeImpl(Response.class, A.class));
                     LogUtils.logd("convert");
                     LogUtils.logd(response);
+                    T finalConvert = convert;
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            onNext.accept(convert);
+                            onNext.accept(finalConvert);
                         }
                     });
                 }
@@ -506,11 +419,5 @@ public class OkHttp<T> {
             return false;
         }
     });
-
-}
-
-
-"""
-    }
 
 }

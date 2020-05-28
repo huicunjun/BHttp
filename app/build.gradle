@@ -13,8 +13,16 @@ android {
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [
+                        bhttp_name: 'OkHttp',
+//                        package_name: 'com.bhttp',
+                ]
+            }
+        }
     }
 
     buildTypes {

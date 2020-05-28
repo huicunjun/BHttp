@@ -57,12 +57,13 @@ public class BaseHttp<T> {
     // private static LinkedHashMap<String, Object> hashMap = new LinkedHashMap<>();
     private static final Map<Method, BaseHttp<?>> serviceMethodCache = new ConcurrentHashMap<>();
     private static OkHttpClient okHttpClient = null;
-
-
+    private Param param = new Param();
+    private Parse<?> parse;
+    private Call call;
+    private Type returnType;
     private int state = 0;
     private static final int state_OK = 0;
     private static final int state_cancel = 1;
-
     private static final int MSG_ON_DESTROY = 666;
 
     private static OkHttpClient getOkHttpClient() {
@@ -96,6 +97,10 @@ public class BaseHttp<T> {
         BaseHttp.okHttpClient = okHttpClient;
     }
 
+    public static void setDebug(boolean b) {
+        LogUtils.setDebug(b);
+    }
+
     public static void setDefaultDomain(@NotNull String s) {
         Param.setDefaultDomain(s);
     }
@@ -103,21 +108,6 @@ public class BaseHttp<T> {
     public Param getParam() {
         return param;
     }
-
-
-    private Handler handler = new Handler(Looper.getMainLooper(), new Handler.Callback() {
-        @Override
-        public boolean handleMessage(@NonNull Message msg) {
-            if (msg.what == MSG_ON_DESTROY) {
-
-            }
-            return false;
-        }
-    });
-    private Param param = new Param();
-    private Parse<?> parse;
-    private Call call;
-    Type returnType;
 
     public BaseHttp(Method method, Object[] args, boolean isRetrofit) {
         if (isRetrofit)
@@ -127,8 +117,8 @@ public class BaseHttp<T> {
     public BaseHttp() {
 
     }
-    //###########################################请求方法相关#################################################################
 
+    //###########################################请求方法相关#################################################################
     @NotNull
     public static Param postFrom(@NotNull String s) {
         return new Param();
@@ -146,37 +136,17 @@ public class BaseHttp<T> {
 
     @NotNull
     public HttpSend<T> asObject(Class<T> tClass) {
-        return new HttpSend<T>(param, tClass);
+        return new HttpSend<T>();
     }
 
     @NotNull
     public HttpSend<T> asResponse(Class<T> tClass) {
-        return new HttpSend<T>(param, tClass);
+        return new HttpSend<T>();
     }
-   /* static class Factory<D> {
-        @NotNull
-        public Factory add(String k, Object v) {
-            return this;
-        }
-
-        @NotNull
-        public <D> HttpSend<D> asObject(Class<?> tClass) {
-
-            return new HttpSend<D>();
-        }
-
-        public  void subscribe(final Observer<D> observer) {
-
-
-        }
-    }*/
-
-
     //#############################################################################################################################
 
 
     //###########################################参数解析相关方法#################################################################
-
     @SuppressWarnings("unchecked")
     public static <T> T create(final Class<T> service) {
         validateServiceInterface(service);
@@ -206,12 +176,6 @@ public class BaseHttp<T> {
                 });
     }
 
-    /**
-     * 基本的检查安全
-     *
-     * @param service
-     * @param <T>
-     */
     private static <T> void validateServiceInterface(Class<T> service) {
         if (!service.isInterface()) {
             throw new IllegalArgumentException("API declarations must be interfaces.");
@@ -227,12 +191,9 @@ public class BaseHttp<T> {
         Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
         Type rawType = parameterizedType.getRawType();
         returnType = actualTypeArguments[0];
-
-
         Annotation[] annotations = method.getAnnotations();
         param = new Param();
         for (int i = 0; i < annotations.length; i++) {
-            //System.out.println(annotations[i].annotationType() + "XXXXXXXX");
             if (annotations[i] instanceof GET) {
                 parseHttpMethodAndPath(((GET) annotations[i]).value(), com.ldw.bhttp.param.Method.GET);
             } else if (annotations[i] instanceof POST) {
@@ -244,39 +205,23 @@ public class BaseHttp<T> {
             Annotation[] parameterAnnotation = parameterAnnotations[i];
             for (int j = 0; j < parameterAnnotation.length; j++) {
                 Annotation annotation = parameterAnnotation[i];
-                System.out.println(annotation.annotationType() + "XXXXXXXXXXXX");
                 parseHttParam(annotation, args[i]);
             }
         }
 
     }
 
-    /**
-     * 解析参数
-     *
-     * @param annotation
-     */
     private void parseHttParam(Annotation annotation, Object value) {
         if (annotation instanceof Query) {
-            System.out.println(value + "XXXXXXXXXXXXX");
             param.addQuery(((Query) annotation).value(), value.toString(), ((Query) annotation).encoded());
         }
     }
 
-    /**
-     * 解析请求方法跟地址
-     *
-     * @param value
-     * @param method
-     */
     void parseHttpMethodAndPath(String value, com.ldw.bhttp.param.Method method) {
         param.setMethod(method);
         param.setUrl(value);
     }
 
-    /**
-     * 重新加载参数，避免重新反射查询不必要的值
-     */
     private void reLoadParam(Method method, Object[] args) {
         param.reload();
         Annotation[][] parameterAnnotations = method.getParameterAnnotations();
@@ -284,7 +229,6 @@ public class BaseHttp<T> {
             Annotation[] parameterAnnotation = parameterAnnotations[i];
             for (int j = 0; j < parameterAnnotation.length; j++) {
                 Annotation annotation = parameterAnnotation[i];
-                System.out.println(annotation.annotationType() + "XXXXXXXXXXXX");
                 parseHttParam(annotation, args[i]);
             }
         }
@@ -305,7 +249,6 @@ public class BaseHttp<T> {
                             LogUtils.logd("停止请求");
                         }
                     }
-                    //  handler.obtainMessage(MSG_ON_DESTROY);
                 } else {
                     state = state_OK;
                 }
@@ -427,13 +370,15 @@ public class BaseHttp<T> {
 
     }
 
-    /**
-     * 开启Debug模式
-     *
-     * @param b
-     */
-    public static void setDebug(boolean b) {
-        LogUtils.setDebug(b);
-    }
+
+    private Handler handler = new Handler(Looper.getMainLooper(), new Handler.Callback() {
+        @Override
+        public boolean handleMessage(@NonNull Message msg) {
+            if (msg.what == MSG_ON_DESTROY) {
+
+            }
+            return false;
+        }
+    });
 
 }

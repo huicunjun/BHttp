@@ -22,14 +22,20 @@
             android:onClick="get"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="GET" />
+            android:text="Retrofit" />
 
         <Button
             android:id="@+id/post"
             android:onClick="post"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="POST" />
+            android:text="链式调用" />
+        <Button
+        android:id="@+id/response"
+        android:onClick="response"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="asResponse" />
     </LinearLayout>
 
     <EditText

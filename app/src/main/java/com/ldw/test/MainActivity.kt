@@ -1,12 +1,12 @@
 package com.ldw.test
 
+//import com.bhttp.wrapper.generator.*
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import bhttp.wrapper.generator.BHttp
 import com.google.gson.Gson
-
+import com.ldw.bhttp.OkHttp
 import com.ldw.bhttp.callback.Observer
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -16,11 +16,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
+        OkHttp.setDefaultDomain("http://192.168.1.3:8022/")
     }
 
     fun get(view: View) {
-        BHttp.create(ApiService::class.java)
+        OkHttp.create(ApiService::class.java)
             .test("2626633")
             .to(this)
             .subscribe({
@@ -31,21 +31,34 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun post(view: View) {
-        AHttp.postJson("http://192.168.1.3:8022//test/")
-            .add("id", "11")
-            .asResponse(String::class.java)
-            .subscribe(object : Observer<Response<*>> {
-                override fun onSubscribe() {}
-                override fun onNext(response: Response<*>) {
-                    val data = response.data
+        OkHttp.postJson("http://192.168.1.3:8022//test/student")
+            .add("id", "666")
+            .asObject(Student::class.java)
+            .subscribe(
+                {
+                    ed.append(it.toString())
                 }
-                override fun onError(e: Throwable) {}
-                override fun onComplete() {}
-            })
+            ) {
+                ed.append(it.message.toString())
+            }
     }
-
+    fun response(view: View) {
+        OkHttp.postJson("http://192.168.1.3:8022//test/asResponse")
+            .add("id", "666")
+            .asResponse(Student::class.java)
+            .subscribe(
+                {
+                    ed.append(it.toString())
+                    ed.append("\n")
+                   // ed.append(it.data?.name)
+                   // ed.append("${it.code}")
+                }
+            ) {
+                ed.append(it.message.toString())
+            }
+    }
     fun download(view: View) {
-        BHttp.create(ApiService::class.java)
+        OkHttp.create(ApiService::class.java)
             .download("test")
             .to(this)
             .subscribe(object : Observer<Response<String?>> {

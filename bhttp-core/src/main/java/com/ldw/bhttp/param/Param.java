@@ -1,6 +1,7 @@
 package com.ldw.bhttp.param;
 
 
+import com.ldw.bhttp.entry.MyResponse;
 import com.ldw.bhttp.httpsend.HttpSend;
 
 import org.jetbrains.annotations.NotNull;
@@ -16,13 +17,13 @@ import okhttp3.RequestBody;
  * @user 威威君
  */
 public class Param {
-    Request.Builder builder = new Request.Builder();
+    private Request.Builder builder = new Request.Builder();
     private HashMap<String, Object> hashMap = new HashMap<>();
-    Method method;
+    private Method method;
 
     private static String domain = null;
     //String domain = null;
-    String url = null;
+    private String url = null;
 
     private HttpUrl.Builder httpUrlbuilder;
 
@@ -89,19 +90,24 @@ public class Param {
 
     @NotNull
     public Param add(String k, Object v) {
-        addParam(k, v);
+        hashMap.put(k, v);
         return this;
     }
 
+    public <T> HttpSend<MyResponse<T>> asResponse(Class<T> tClass) {
+        HttpSend<MyResponse<T>> httpSend = new HttpSend<MyResponse<T>>();
+        return httpSend;
+    }
+
     public <T> HttpSend<T> asObject(Class<T> tClass) {
-        return new HttpSend<>(this, tClass);
+        return new HttpSend<>();
     }
 
     public HttpSend<String> asString() {
-        return new HttpSend<>(this, String.class);
+        return new HttpSend<>();
     }
 
-    public void addParam(String k, Object v) {
+  /*  public void addParam(String k, Object v) {
         hashMap.put(k, v);
-    }
+    }*/
 }
