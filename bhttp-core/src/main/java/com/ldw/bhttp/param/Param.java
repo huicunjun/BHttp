@@ -121,6 +121,10 @@ public class Param {
         this.paramType = paramType;
     }
 
+    public void setParamType(ParamType paramType) {
+        this.paramType = paramType;
+    }
+
     public void add(String k, Object v, boolean isEncode) {
         hashMap.put(k, v);
         hashMapEncode.put(k, isEncode);

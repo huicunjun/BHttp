@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun post(view: View) {
-        OkHttp.postJson("http://192.168.1.3:8022//test/student")
+        OkHttp.postFrom("http://192.168.1.3:8022//test/student")
             .add("id", "666")
             .asObject(Student::class.java)
             .subscribe(

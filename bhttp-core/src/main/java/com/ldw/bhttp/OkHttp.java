@@ -130,16 +130,13 @@ public class OkHttp<T> {
 
     //###########################################请求方法相关#################################################################
     @NotNull
-    public static Param postFrom(@NotNull String s) {
-        return new Param();
+    public static OkHttp<?> postFrom(@NotNull String s) {
+        OkHttp<?> client = new OkHttp<>();
+        client.param.setUrl(s);
+        client.param.setMethod(com.ldw.bhttp.param.Method.POST);
+        client.param.setParamType(ParamType.Form);
+        return client;
     }
-
-  /*  @NotNull
-    public static Param postJson(@NotNull String s) {
-        Param param = new Param();
-        param.setUrl(s);
-        return param;
-    }*/
 
     @NotNull
     public static OkHttp<?> postJson(String url) {
