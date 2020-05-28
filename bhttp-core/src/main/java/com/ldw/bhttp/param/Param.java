@@ -8,7 +8,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 
+import okhttp3.FormBody;
 import okhttp3.HttpUrl;
+import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 
@@ -19,13 +21,14 @@ import okhttp3.RequestBody;
 public class Param {
     private Request.Builder builder = new Request.Builder();
     private HashMap<String, Object> hashMap = new HashMap<>();
+    private HashMap<String, Boolean> hashMapEncode = new HashMap<>();
     private Method method;
-
+    private ParamType paramType;
     private static String domain = null;
     //String domain = null;
     private String url = null;
 
-    private HttpUrl.Builder httpUrlbuilder;
+    // private HttpUrl.Builder httpUrlbuilder;
 
     public static String getDomain() {
         return domain;
@@ -59,42 +62,71 @@ public class Param {
         }
     }
 
-    public void addQuery(String k, String v, boolean isEncode) {
-        if (httpUrlbuilder == null) {
-            httpUrlbuilder = HttpUrl.parse(getFinalUrl()).newBuilder();
-        }
-        if (isEncode) {
-            httpUrlbuilder.addEncodedQueryParameter(k, v);
-        } else {
-            httpUrlbuilder.addQueryParameter(k, v);
-        }
-    }
 
     public void reload() {
-        httpUrlbuilder = HttpUrl.parse(getFinalUrl()).newBuilder();
+        hashMap.clear();
     }
 
     public Request getRequest() {
-        String finalURL = getFinalUrl();
-
+        String finalURL = getFinalUrl();//最终请求地址
         builder.url(finalURL);
-//        builder.url("http://gdptdad.com:8080/api/user/login/?identifier=1&voucher=6");
+
+        //解析请求方法
         if (method == Method.GET) {
-            //httpUrlbuilder.build().newBuilder(finalURL);
+            //get请求可以使用HttpUrl特殊处理
+            HttpUrl.Builder httpUrlbuilder = HttpUrl.parse(finalURL).newBuilder();
+            for (String s : hashMap.keySet()) {
+                Object o = hashMap.get(s);
+                boolean t = false;
+                t = hashMapEncode.get(s);
+                if (t)
+                    httpUrlbuilder.addEncodedQueryParameter(s, o.toString());
+                else
+                    httpUrlbuilder.addQueryParameter(s, o.toString());
+            }
             builder.url(httpUrlbuilder.build()).get();
         } else if (method == Method.POST) {
-            builder.post(RequestBody.create("", null));
+            if (paramType.isForm()) {
+                FormBody.Builder formBodybuilder = new FormBody.Builder();
+                for (String s : hashMap.keySet()) {
+                    Object o = hashMap.get(s);
+                    boolean t = false;
+                    t = hashMapEncode.get(s);
+                    if (t)
+                        formBodybuilder.addEncoded(s, o.toString());
+                    else
+                        formBodybuilder.add(s, o.toString());
+                }
+                this.builder.post(formBodybuilder.build());
+            }
+        } else if (method == Method.PUT) {
+            builder.put(RequestBody.create("new",MediaType.parse("application/x-www-form-urlencoded")));
+            //todo
         }
+        //解析请求参数
+
+
         return builder.build();
     }
 
     @NotNull
     public Param add(String k, Object v) {
-        hashMap.put(k, v);
+        add(k, v, false);
         return this;
     }
 
-    public <T> HttpSend<MyResponse<T>> asResponse(Class<T> tClass) {
+    public void add(String k, Object v, boolean isEncode, ParamType paramType) {
+        hashMap.put(k, v);
+        hashMapEncode.put(k, isEncode);
+        this.paramType = paramType;
+    }
+
+    public void add(String k, Object v, boolean isEncode) {
+        hashMap.put(k, v);
+        hashMapEncode.put(k, isEncode);
+    }
+
+/*    public <T> HttpSend<MyResponse<T>> asResponse(Class<T> tClass) {
         HttpSend<MyResponse<T>> httpSend = new HttpSend<MyResponse<T>>();
         return httpSend;
     }
@@ -105,7 +137,10 @@ public class Param {
 
     public HttpSend<String> asString() {
         return new HttpSend<>();
-    }
+    }*/
+
+
+
 
   /*  public void addParam(String k, Object v) {
         hashMap.put(k, v);

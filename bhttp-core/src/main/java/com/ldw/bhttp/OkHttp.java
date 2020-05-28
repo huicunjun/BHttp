@@ -16,8 +16,12 @@ import androidx.lifecycle.LifecycleOwner;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.ldw.bhttp.annotation.Form;
 import com.ldw.bhttp.annotation.GET;
+import com.ldw.bhttp.annotation.Json;
 import com.ldw.bhttp.annotation.POST;
+import com.ldw.bhttp.annotation.PUT;
+import com.ldw.bhttp.annotation.Path;
 import com.ldw.bhttp.annotation.Query;
 import com.ldw.bhttp.callback.Consumer;
 import com.ldw.bhttp.callback.Observer;
@@ -25,6 +29,7 @@ import com.ldw.bhttp.entry.MyResponse;
 import com.ldw.bhttp.httpsend.HttpSend;
 import com.ldw.bhttp.ParameterizedTypeImpl;
 import com.ldw.bhttp.param.Param;
+import com.ldw.bhttp.param.ParamType;
 import com.ldw.bhttp.parse.Parse;
 import com.ldw.bhttp.ssl.SSLSocketFactoryImpl;
 import com.ldw.bhttp.ssl.X509TrustManagerImpl;
@@ -208,7 +213,7 @@ public class OkHttp<T> {
             throw new IllegalArgumentException("API interfaces must not extend other interfaces.");
         }
     }
-
+    @SuppressWarnings("unchecked")
     private void loadService(Method method, Object[] args) {
         returnType = method.getGenericReturnType();
         ParameterizedType parameterizedType = (ParameterizedType) returnType;
@@ -222,6 +227,8 @@ public class OkHttp<T> {
                 parseHttpMethodAndPath(((GET) annotations[i]).value(), com.ldw.bhttp.param.Method.GET);
             } else if (annotations[i] instanceof POST) {
                 parseHttpMethodAndPath(((POST) annotations[i]).value(), com.ldw.bhttp.param.Method.POST);
+            }else if (annotations[i] instanceof PUT) {
+                parseHttpMethodAndPath(((PUT) annotations[i]).value(), com.ldw.bhttp.param.Method.PUT);
             }
         }
         Annotation[][] parameterAnnotations = method.getParameterAnnotations();
@@ -237,7 +244,13 @@ public class OkHttp<T> {
 
     private void parseHttParam(Annotation annotation, Object value) {
         if (annotation instanceof Query) {
-            param.addQuery(((Query) annotation).value(), value.toString(), ((Query) annotation).encoded());
+            param.add(((Query) annotation).value(), value.toString(), ((Query) annotation).encoded(), ParamType.Query);
+        } else if (annotation instanceof Form) {
+            param.add(((Form) annotation).value(), value.toString(), ((Form) annotation).encoded(),ParamType.Form);
+        }else if (annotation instanceof Json) {
+            param.add(((Json) annotation).value(), value.toString(), ((Json) annotation).encoded(),ParamType.Json);
+        }else if (annotation instanceof Path) {
+            param.add(((Path) annotation).value(), value.toString(), ((Path) annotation).encoded(),ParamType.Path);
         }
     }
 

@@ -8,8 +8,7 @@ public enum Method {
     POST,
     PUT,
     PATCH,
-    DELETE,
-    ;
+    DELETE,;
 
     public boolean isGet() {
         return name().equals("GET");
