@@ -4,8 +4,9 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import bhttp.wrapper.generator.BHttp
 import com.google.gson.Gson
-import com.ldw.bhttp.BHttp
+
 import com.ldw.bhttp.callback.Observer
 import kotlinx.android.synthetic.main.activity_main.*
 

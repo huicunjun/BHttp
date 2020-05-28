@@ -1,9 +1,11 @@
 package com.ldw.test;
 
-import com.ldw.bhttp.BHttp;
+
 import com.ldw.bhttp.annotation.GET;
 import com.ldw.bhttp.annotation.POST;
 import com.ldw.bhttp.annotation.Query;
+
+import bhttp.wrapper.generator.BHttp;
 
 /**
  * @date 2020/5/26 19:28

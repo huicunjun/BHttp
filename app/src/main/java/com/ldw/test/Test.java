@@ -1,18 +1,15 @@
 package com.ldw.test;
 
-import androidx.annotation.NonNull;
-
-import com.ldw.bhttp.BHttp;
-import com.ldw.bhttp.callback.Consumer;
-import com.ldw.bhttp.callback.Observer;
-
 /**
  * @date 2020/5/26 19:08
  * @user 威威君
  */
+
+
 public class Test {
     public static void main(String[] args) {
-        AHttp.postJson("")
+
+      /*  AHttp.postJson("")
                 .add("id","sss")
                 .asResponse(String.class)
                 .subscribe(new Observer() {
@@ -75,6 +72,6 @@ public class Test {
                     public void accept(Throwable throwable) {
 
                     }
-                });
+                });*/
     }
 }

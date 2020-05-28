@@ -1,3 +1,5 @@
 rootProject.name='okhttp-bhttp'
 include ':app'
 include ':bhttp-core'
+include ':bhttp-compiler'
+include ':bhttp-annotation'

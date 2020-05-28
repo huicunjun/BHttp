@@ -21,10 +21,19 @@ public class Param {
     private HashMap<String, Object> hashMap = new HashMap<>();
     Method method;
 
-    String domain = null;
+    private static String domain = null;
+    //String domain = null;
     String url = null;
 
     private HttpUrl.Builder httpUrlbuilder;
+
+    public static String getDomain() {
+        return domain;
+    }
+
+    public static void setDefaultDomain(String s) {
+        domain = s;
+    }
 
     public void setDomain(String domain) {
         this.domain = domain;
@@ -44,7 +53,7 @@ public class Param {
             return url;
         } else {
             if (domain == null) {
-                domain = BHttp.getDefaultDomain();
+                domain = getDomain();
             }
             return domain + url;
         }
@@ -89,7 +98,7 @@ public class Param {
         return new HttpSend<>(this, tClass);
     }
 
-    public  HttpSend<String> asString() {
+    public HttpSend<String> asString() {
         return new HttpSend<>(this, String.class);
     }
 

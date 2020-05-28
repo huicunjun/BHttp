@@ -57,7 +57,6 @@ public class BHttp<T> {
     // private static LinkedHashMap<String, Object> hashMap = new LinkedHashMap<>();
     private static final Map<Method, BHttp<?>> serviceMethodCache = new ConcurrentHashMap<>();
     private static OkHttpClient okHttpClient = null;
-    private static String defaultDomain = null;
 
 
     private int state = 0;
@@ -97,17 +96,14 @@ public class BHttp<T> {
         BHttp.okHttpClient = okHttpClient;
     }
 
-    public static void setDefaultDomain(String defaultDomain) {
-        BHttp.defaultDomain = defaultDomain;
+    public static void setDefaultDomain(@NotNull String s) {
+        Param.setDefaultDomain(s);
     }
 
     public Param getParam() {
         return param;
     }
 
-    public static String getDefaultDomain() {
-        return defaultDomain;
-    }
 
     private Handler handler = new Handler(Looper.getMainLooper(), new Handler.Callback() {
         @Override
@@ -149,11 +145,12 @@ public class BHttp<T> {
     }
 
     @NotNull
-    public  HttpSend<T> asObject(Class<T> tClass) {
+    public HttpSend<T> asObject(Class<T> tClass) {
         return new HttpSend<T>(param, tClass);
     }
+
     @NotNull
-    public  HttpSend<T> asResponse(Class<T> tClass) {
+    public HttpSend<T> asResponse(Class<T> tClass) {
         return new HttpSend<T>(param, tClass);
     }
    /* static class Factory<D> {
