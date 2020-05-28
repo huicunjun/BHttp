@@ -1,13 +1,13 @@
 package com.ldw.test;
 
-import com.ldw.bhttp.BHttp;
+import com.ldw.bhttp.BaseHttp;
 
 
 /**
  * @date 2020/5/27 20:22
  * @user 威威君
  */
-public class AHttp<T> extends BHttp<Response<T>> {
+public class AHttp<T> extends BaseHttp<Response<T>> {
 
 
 }

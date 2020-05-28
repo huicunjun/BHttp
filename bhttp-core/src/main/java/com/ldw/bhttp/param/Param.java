@@ -1,7 +1,6 @@
 package com.ldw.bhttp.param;
 
 
-import com.ldw.bhttp.BHttp;
 import com.ldw.bhttp.httpsend.HttpSend;
 
 import org.jetbrains.annotations.NotNull;

@@ -1,11 +1,10 @@
 package com.ldw.test;
 
 
+import com.ldw.bhttp.BaseHttp;
 import com.ldw.bhttp.annotation.GET;
 import com.ldw.bhttp.annotation.POST;
 import com.ldw.bhttp.annotation.Query;
-
-import bhttp.wrapper.generator.BHttp;
 
 /**
  * @date 2020/5/26 19:28
@@ -14,14 +13,14 @@ import bhttp.wrapper.generator.BHttp;
 public interface ApiService {
     // @GET("http://192.168.1.3:8022//test/")
     @GET("test/")
-    BHttp<Response<String>> test(@Query("id") String id);
+    BaseHttp<Response<String>> test(@Query("id") String id);
 
     @GET("http://gdptdad.com/download/app-release.apk")
-    BHttp<Response<String>> download(@Query("id") String id);
+    BaseHttp<Response<String>> download(@Query("id") String id);
 
     @GET("http://192.168.1.3:8022//test/")
-    BHttp<Response<Bean>> login(String id);
+    BaseHttp<Response<Bean>> login(String id);
 
     @POST("SSdgdsgS")
-    BHttp<Response<String>> order(String id);
+    BaseHttp<Response<String>> order(String id);
 }

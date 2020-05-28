@@ -1,4 +1,123 @@
-package com.ldw.bhttp;
+package com.ldw.bhttp.compiler
+
+import com.ldw.bhttp.annotation.DefaultDomain
+import com.squareup.javapoet.JavaFile
+import com.squareup.javapoet.MethodSpec
+import com.squareup.javapoet.TypeSpec
+import java.io.BufferedOutputStream
+import java.io.BufferedWriter
+import java.io.IOException
+import java.io.OutputStreamWriter
+import java.nio.charset.StandardCharsets
+import java.util.*
+import javax.annotation.processing.AbstractProcessor
+import javax.annotation.processing.Filer
+import javax.annotation.processing.ProcessingEnvironment
+import javax.annotation.processing.RoundEnvironment
+import javax.lang.model.element.Modifier
+import javax.lang.model.element.TypeElement
+
+/**
+ * @date 2020/5/28 10:23
+ * @user 威威君
+ */
+class KotlinProcessor : AbstractProcessor() {
+    var filer: Filer? = null
+
+    @Synchronized
+    override fun init(processingEnv: ProcessingEnvironment) {
+        super.init(processingEnv)
+        filer = processingEnv.filer
+    }
+    override fun process(
+        annotations: MutableSet<out TypeElement>?,
+        roundEnv: RoundEnvironment?
+    ): Boolean {
+        try {
+            generateHelloworld()
+            yuansheng(roundEnv!!)
+        } catch (e: IOException) {
+            e.printStackTrace()
+            println(e.message)
+        }
+
+        return true
+    }
+
+    // 第一种生成方法：
+    @Throws(IOException::class)
+    private fun generateHelloworld() {
+        val main = MethodSpec.methodBuilder("main")
+            .addModifiers(
+                Modifier.PUBLIC,
+                Modifier.STATIC
+            )
+            .addParameter(Array<String>::class.java, "args")
+            .addStatement("\$T.out.println(\$S)", System::class.java, "Hello World")
+            .addStatement("System.out.println(\$S)", "Hello World")
+            .build()
+        val typeSpec =
+            TypeSpec.classBuilder("HelloWorld")
+                .addModifiers(
+                    Modifier.FINAL,
+                    Modifier.PUBLIC
+                )
+                .addMethod(main)
+                .build()
+        val javaFile = JavaFile.builder("bhttp.wrapper.generator", typeSpec)
+            .build()
+        javaFile.writeTo(filer)
+    }
+
+    private fun yuansheng(roundEnv: RoundEnvironment) {
+        val builder = StringBuilder()
+            .append("package bhttp.wrapper.generator;\n\n") //generator
+            .append("public  class BHttp {\n\n") // open class
+            .append("\tpublic static String getMessage() {\n") // open method
+            .append("\t\treturn \"")
+
+
+        // for each javax.lang.model.element.Element annotated with the CustomAnnotation
+        for (element in roundEnv.getElementsAnnotatedWith(
+            DefaultDomain::class.java
+        )) {
+            val objectType = element.simpleName.toString()
+            // this is appending to the return statement
+            builder.append(objectType).append(" says hello!\\n")
+        }
+        builder.append("\";\n") // end return
+            .append("\t}\n") // close method
+            .append("}\n") // close class
+        try { // write the file
+            val source =
+                processingEnv.filer.createSourceFile("bhttp.wrapper.generator.BHttp")
+            val outputStream = source.openOutputStream()
+            val osr =
+                OutputStreamWriter(outputStream, StandardCharsets.UTF_8)
+            val bufferedWriter = BufferedWriter(osr)
+            val bufferedOutputStream =
+                BufferedOutputStream(outputStream)
+            //  Writer writer = osr.w
+            //bufferedOutputStream.write(ss.getBytes());
+            //  bufferedOutputStream.flush();
+            //  bufferedOutputStream.close();
+            bufferedWriter.write(ss)
+            bufferedWriter.flush()
+            bufferedWriter.close()
+        } catch (e: IOException) {
+            // Note: calling e.printStackTrace() will print IO errors
+            // that occur from the file already existing after its first run, this is normal
+        }
+    }
+
+    override fun getSupportedAnnotationTypes(): Set<String>? {
+        val annotations: MutableSet<String> =
+            HashSet()
+        annotations.add(DefaultDomain::class.java.canonicalName)
+        return annotations
+    }
+
+    var ss = """package bhttp.wrapper.generator;
 
 import android.app.Activity;
 import android.os.Handler;
@@ -436,4 +555,6 @@ public class BHttp<T> {
         LogUtils.setDebug(b);
     }
 
+}
+"""
 }

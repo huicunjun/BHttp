@@ -1,7 +1,7 @@
 package com.ldw.test
 
 import android.app.Application
-import com.ldw.bhttp.BHttp
+import com.ldw.bhttp.BaseHttp
 
 /**
  * @date 2020/5/27 7:42
@@ -10,7 +10,7 @@ import com.ldw.bhttp.BHttp
 class APP : Application() {
     override fun onCreate() {
         super.onCreate()
-        BHttp.setDebug(true)
-        BHttp.setDefaultDomain("http://192.168.1.3:8022/")
+        BaseHttp.setDebug(true)
+        BaseHttp.setDefaultDomain("http://192.168.1.3:8022/")
     }
 }

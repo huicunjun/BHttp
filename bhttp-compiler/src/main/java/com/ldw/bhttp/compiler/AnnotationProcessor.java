@@ -5,6 +5,7 @@ import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -92,9 +93,13 @@ public class AnnotationProcessor extends AbstractProcessor {
             OutputStream outputStream = source.openOutputStream();
             OutputStreamWriter osr = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
             BufferedWriter bufferedWriter = new BufferedWriter(osr);
-          //  Writer writer = osr.w
-            bufferedWriter.write(ss);
+            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream);
+            //  Writer writer = osr.w
+            //bufferedOutputStream.write(ss.getBytes());
+            //  bufferedOutputStream.flush();
+            //  bufferedOutputStream.close();
 
+            bufferedWriter.write(ss);
             bufferedWriter.flush();
             bufferedWriter.close();
         } catch (IOException e) {
