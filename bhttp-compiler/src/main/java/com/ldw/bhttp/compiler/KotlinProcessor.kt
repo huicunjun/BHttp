@@ -121,6 +121,7 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleEventObserver;
 import androidx.lifecycle.LifecycleOwner;
 
+import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.ldw.bhttp.annotation.GET;
 import com.ldw.bhttp.annotation.POST;
@@ -129,6 +130,7 @@ import com.ldw.bhttp.callback.Consumer;
 import com.ldw.bhttp.callback.Observer;
 import com.ldw.bhttp.entry.MyResponse;
 import com.ldw.bhttp.httpsend.HttpSend;
+import com.ldw.bhttp.ParameterizedTypeImpl;
 import com.ldw.bhttp.param.Param;
 import com.ldw.bhttp.parse.Parse;
 import com.ldw.bhttp.ssl.SSLSocketFactoryImpl;
@@ -174,6 +176,7 @@ public class OkHttp<T> {
     private static final int state_OK = 0;
     private static final int state_cancel = 1;
     private static final int MSG_ON_DESTROY = 666;
+    private Class<?> tClass;
 
     private static OkHttpClient getOkHttpClient() {
         if (okHttpClient == null) {
@@ -241,10 +244,11 @@ public class OkHttp<T> {
     }*/
 
     @NotNull
-    public static  OkHttp<?> postJson(String url) {
-        OkHttp<Object> client = new OkHttp<>();
+    public static OkHttp<?> postJson(String url) {
+        OkHttp<?> client = new OkHttp<>();
         client.param.setUrl(url);
-        return new OkHttp<>();
+        client.param.setMethod(com.ldw.bhttp.param.Method.POST);
+        return client;
     }
 
     @NotNull
@@ -256,15 +260,16 @@ public class OkHttp<T> {
 
     @NotNull
     @SuppressWarnings("unchecked")
-    public  <D> OkHttp<D> asObject(Class<D> tClass) {
-        returnType = new TypeToken<D>() {
-        }.getType();
+    public <D> OkHttp<D> asObject(Class<D> tClass) {
+        // returnType = new TypeToken<D>() {}.getType();
+        this.tClass = tClass;
         return (OkHttp<D>) this;
     }
 
     @NotNull
     @SuppressWarnings("unchecked")
     public <D> OkHttp<MyResponse<D>> asResponse(Class<D> tClass) {
+        this.tClass = tClass;
         returnType = new TypeToken<MyResponse<D>>() {
         }.getType();
         return (OkHttp<MyResponse<D>>) this;
@@ -438,17 +443,24 @@ public class OkHttp<T> {
                         return;
                     parse = new Parse<>();
                     String s = response.body().string();
-                    final T convert = (T) parse.convert(returnType, s);
+                    T convert = null;
+                    if (returnType != null && tClass != null) {
+                        convert = new Gson().fromJson(s, new ParameterizedTypeImpl(MyResponse.class, tClass));
+                    } else if (returnType != null) {
+                        convert = (T) parse.convert(returnType, s);
+                    } else if (tClass != null) {
+                        convert = (T) parse.convert(tClass, s);
+                    }
                     LogUtils.logd("convert");
                     LogUtils.logd(response);
+                    T finalConvert = convert;
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            observer.onNext(convert);
+                            observer.onNext(finalConvert);
                             observer.onComplete();
                         }
                     });
-                    // onNext.accept();
                 }
             });
         }
@@ -481,13 +493,22 @@ public class OkHttp<T> {
                         return;
                     parse = new Parse<>();
                     String s = response.body().string();
-                    final T convert = (T) parse.convert(returnType, s);
+                    T convert = null;
+                    if (returnType != null && tClass != null) {
+                        convert = new Gson().fromJson(s, new ParameterizedTypeImpl(MyResponse.class, tClass));
+                    } else if (returnType != null) {
+                        convert = (T) parse.convert(returnType, s);
+                    } else if (tClass != null) {
+                        convert = (T) parse.convert(tClass, s);
+                    }
+                    //Response<A> responseA = fromJson(result, new ParameterizedTypeImpl(Response.class, A.class));
                     LogUtils.logd("convert");
                     LogUtils.logd(response);
+                    T finalConvert = convert;
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            onNext.accept(convert);
+                            onNext.accept(finalConvert);
                         }
                     });
                 }

@@ -23,6 +23,7 @@ import com.ldw.bhttp.callback.Consumer;
 import com.ldw.bhttp.callback.Observer;
 import com.ldw.bhttp.entry.MyResponse;
 import com.ldw.bhttp.httpsend.HttpSend;
+import com.ldw.bhttp.ParameterizedTypeImpl;
 import com.ldw.bhttp.param.Param;
 import com.ldw.bhttp.parse.Parse;
 import com.ldw.bhttp.ssl.SSLSocketFactoryImpl;
