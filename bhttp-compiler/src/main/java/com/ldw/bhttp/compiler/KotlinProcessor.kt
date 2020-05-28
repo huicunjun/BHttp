@@ -68,7 +68,7 @@ class KotlinProcessor : AbstractProcessor() {
                 .build()
         val javaFile = JavaFile.builder("com.bhttp.wrapper.generator", typeSpec)
             .build()
-        javaFile.writeTo(filer)
+        //javaFile.writeTo(filer)
     }
 
     private fun createByString(roundEnv: RoundEnvironment) {
@@ -237,16 +237,13 @@ public class OkHttp<T> {
 
     //###########################################请求方法相关#################################################################
     @NotNull
-    public static Param postFrom(@NotNull String s) {
-        return new Param();
+    public static OkHttp<?> postFrom(@NotNull String s) {
+        OkHttp<?> client = new OkHttp<>();
+        client.param.setUrl(s);
+        client.param.setMethod(com.ldw.bhttp.param.Method.POST);
+        client.param.setParamType(ParamType.Form);
+        return client;
     }
-
-  /*  @NotNull
-    public static Param postJson(@NotNull String s) {
-        Param param = new Param();
-        param.setUrl(s);
-        return param;
-    }*/
 
     @NotNull
     public static OkHttp<?> postJson(String url) {
@@ -305,7 +302,6 @@ public class OkHttp<T> {
                                 serviceMethodCache.put(method, result);
                             }
                         }
-                        // System.out.println(new Gson().toJson(args) +"XXXXXXXXXXXXX");
                         return result;
 
                     }
@@ -320,6 +316,7 @@ public class OkHttp<T> {
             throw new IllegalArgumentException("API interfaces must not extend other interfaces.");
         }
     }
+
     @SuppressWarnings("unchecked")
     private void loadService(Method method, Object[] args) {
         returnType = method.getGenericReturnType();
@@ -334,7 +331,7 @@ public class OkHttp<T> {
                 parseHttpMethodAndPath(((GET) annotations[i]).value(), com.ldw.bhttp.param.Method.GET);
             } else if (annotations[i] instanceof POST) {
                 parseHttpMethodAndPath(((POST) annotations[i]).value(), com.ldw.bhttp.param.Method.POST);
-            }else if (annotations[i] instanceof PUT) {
+            } else if (annotations[i] instanceof PUT) {
                 parseHttpMethodAndPath(((PUT) annotations[i]).value(), com.ldw.bhttp.param.Method.PUT);
             }
         }
@@ -346,18 +343,17 @@ public class OkHttp<T> {
                 parseHttParam(annotation, args[i]);
             }
         }
-
     }
 
     private void parseHttParam(Annotation annotation, Object value) {
         if (annotation instanceof Query) {
             param.add(((Query) annotation).value(), value.toString(), ((Query) annotation).encoded(), ParamType.Query);
         } else if (annotation instanceof Form) {
-            param.add(((Form) annotation).value(), value.toString(), ((Form) annotation).encoded(),ParamType.Form);
-        }else if (annotation instanceof Json) {
-            param.add(((Json) annotation).value(), value.toString(), ((Json) annotation).encoded(),ParamType.Json);
-        }else if (annotation instanceof Path) {
-            param.add(((Path) annotation).value(), value.toString(), ((Path) annotation).encoded(),ParamType.Path);
+            param.add(((Form) annotation).value(), value.toString(), ((Form) annotation).encoded(), ParamType.Form);
+        } else if (annotation instanceof Json) {
+            param.add(((Json) annotation).value(), value.toString(), ((Json) annotation).encoded(), ParamType.Json);
+        } else if (annotation instanceof Path) {
+            param.add(((Path) annotation).value(), value.toString(), ((Path) annotation).encoded(), ParamType.Path);
         }
     }
 
@@ -382,20 +378,18 @@ public class OkHttp<T> {
 
     //###############################################生命周期相关方法#################################################################
     private void addLifeLis(Lifecycle lifecycle) {
-        lifecycle.addObserver(new LifecycleEventObserver() {
-            @Override
-            public void onStateChanged(@NonNull LifecycleOwner source, @NonNull Lifecycle.Event event) {
-                if (event == Lifecycle.Event.ON_DESTROY) {
-                    state = state_cancel;
-                    if (call != null) {
-                        if (!call.isCanceled()) {
-                            call.cancel();
-                            LogUtils.logd("停止请求");
-                        }
+        lifecycle.addObserver((LifecycleEventObserver) (source, event) -> {
+            if (event == Lifecycle.Event.ON_DESTROY) {
+                state = state_cancel;
+                if (call != null) {
+                    if (!call.isCanceled()) {
+                        call.cancel();
+                        LogUtils.logd("停止请求");
+                        System.gc();
                     }
-                } else {
-                    state = state_OK;
                 }
+            } else {
+                state = state_OK;
             }
         });
     }
@@ -530,15 +524,11 @@ public class OkHttp<T> {
 
     }
 
+    private Handler handler = new Handler(Looper.getMainLooper(), msg -> {
+        if (msg.what == MSG_ON_DESTROY) {
 
-    private Handler handler = new Handler(Looper.getMainLooper(), new Handler.Callback() {
-        @Override
-        public boolean handleMessage(@NonNull Message msg) {
-            if (msg.what == MSG_ON_DESTROY) {
-
-            }
-            return false;
         }
+        return false;
     });
 
 }

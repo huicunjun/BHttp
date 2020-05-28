@@ -1,12 +1,10 @@
 package com.ldw.bhttp.param;
 
 
-import com.ldw.bhttp.entry.MyResponse;
-import com.ldw.bhttp.httpsend.HttpSend;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 import okhttp3.FormBody;
 import okhttp3.HttpUrl;
@@ -19,16 +17,14 @@ import okhttp3.RequestBody;
  * @user 威威君
  */
 public class Param {
-    private Request.Builder builder = new Request.Builder();
-    private HashMap<String, Object> hashMap = new HashMap<>();
-    private HashMap<String, Boolean> hashMapEncode = new HashMap<>();
-    private Method method;
-    private ParamType paramType;
     private static String domain = null;
-    //String domain = null;
-    private String url = null;
 
-    // private HttpUrl.Builder httpUrlbuilder;
+    private Request.Builder builder = new Request.Builder();
+    private HashMap<String, ParameValue> hashMap = new HashMap<>();
+    //private HashMap<String, Boolean> hashMapEncode = new HashMap<>();
+    private Method method;
+    private ParamType paramType = ParamType.Form;
+    private String url = null;
 
     public static String getDomain() {
         return domain;
@@ -70,37 +66,32 @@ public class Param {
     public Request getRequest() {
         String finalURL = getFinalUrl();//最终请求地址
         builder.url(finalURL);
-
         //解析请求方法
         if (method == Method.GET) {
             //get请求可以使用HttpUrl特殊处理
             HttpUrl.Builder httpUrlbuilder = HttpUrl.parse(finalURL).newBuilder();
-            for (String s : hashMap.keySet()) {
-                Object o = hashMap.get(s);
-                boolean t = false;
-                t = hashMapEncode.get(s);
-                if (t)
-                    httpUrlbuilder.addEncodedQueryParameter(s, o.toString());
+            for (String key : hashMap.keySet()) {
+                Object v = hashMap.get(key).v;
+                if (Objects.requireNonNull(hashMap.get(key)).isEncode)
+                    httpUrlbuilder.addEncodedQueryParameter(key, v.toString());
                 else
-                    httpUrlbuilder.addQueryParameter(s, o.toString());
+                    httpUrlbuilder.addQueryParameter(key, v.toString());
             }
             builder.url(httpUrlbuilder.build()).get();
         } else if (method == Method.POST) {
-            if (paramType.isForm()) {
+            if (paramType == ParamType.Form) {
                 FormBody.Builder formBodybuilder = new FormBody.Builder();
-                for (String s : hashMap.keySet()) {
-                    Object o = hashMap.get(s);
-                    boolean t = false;
-                    t = hashMapEncode.get(s);
-                    if (t)
-                        formBodybuilder.addEncoded(s, o.toString());
+                for (String key : hashMap.keySet()) {
+                    Object v = Objects.requireNonNull(hashMap.get(key)).v;
+                    if (Objects.requireNonNull(hashMap.get(key)).isEncode)
+                        formBodybuilder.addEncoded(key, v.toString());
                     else
-                        formBodybuilder.add(s, o.toString());
+                        formBodybuilder.add(key, v.toString());
                 }
                 this.builder.post(formBodybuilder.build());
             }
         } else if (method == Method.PUT) {
-            builder.put(RequestBody.create("new",MediaType.parse("application/x-www-form-urlencoded")));
+            builder.put(RequestBody.create("new", MediaType.parse("application/x-www-form-urlencoded")));
             //todo
         }
         //解析请求参数
@@ -116,8 +107,7 @@ public class Param {
     }
 
     public void add(String k, Object v, boolean isEncode, ParamType paramType) {
-        hashMap.put(k, v);
-        hashMapEncode.put(k, isEncode);
+        hashMap.put(k,new ParameValue(k,v,isEncode));
         this.paramType = paramType;
     }
 
@@ -126,8 +116,7 @@ public class Param {
     }
 
     public void add(String k, Object v, boolean isEncode) {
-        hashMap.put(k, v);
-        hashMapEncode.put(k, isEncode);
+        hashMap.put(k,new ParameValue(k,v,isEncode));
     }
 
 /*    public <T> HttpSend<MyResponse<T>> asResponse(Class<T> tClass) {
@@ -149,4 +138,16 @@ public class Param {
   /*  public void addParam(String k, Object v) {
         hashMap.put(k, v);
     }*/
+
+    class ParameValue {
+        public String key;
+        public Object v;
+        public boolean isEncode = false;
+
+        public ParameValue(String key, Object v, boolean isEncode) {
+            this.key = key;
+            this.v = v;
+            this.isEncode = isEncode;
+        }
+    }
 }
