@@ -2,7 +2,9 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 //apply from: "bintrayUpload.gradle"
+apply plugin: 'com.github.dcendents.android-maven'
 
+group='com.github.huicunjun'
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
@@ -51,4 +53,6 @@ dependencies {
 
     implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.7.2'
     implementation 'com.google.code.gson:gson:2.8.6'
+
+
 }
