@@ -1,7 +1,7 @@
 package com.ldw.test;
 //import com.bhttp.wrapper.generator.*;
 
-import com.ldw.bhttp.OkHttp;
+import com.bhttp.wrapper.generator.BHttp;
 import com.ldw.bhttp.annotation.GET;
 import com.ldw.bhttp.annotation.POST;
 import com.ldw.bhttp.annotation.Query;
@@ -14,14 +14,14 @@ import com.ldw.bhttp.annotation.Query;
 public interface ApiService {
     // @GET("http://192.168.1.3:8022//test/")
     @GET("test/")
-    OkHttp<Response<String>> test(@Query("id") String id);
+    BHttp<Response<String>> test(@Query("id") String id);
 
     @GET("http://gdptdad.com/download/app-release.apk")
-    OkHttp<Response<String>> download(@Query("id") String id);
+    BHttp<Response<String>> download(@Query("id") String id);
 
     @GET("http://192.168.1.3:8022//test/")
-    OkHttp<Response<Bean>> login(String id);
+    BHttp<Response<Bean>> login(String id);
 
     @POST("SSdgdsgS")
-    OkHttp<Response<String>> order(String id);
+    BHttp<Response<String>> order(String id);
 }

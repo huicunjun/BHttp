@@ -3,19 +3,17 @@ package com.ldw.bhttp;
 import android.app.Activity;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleEventObserver;
-import androidx.lifecycle.LifecycleOwner;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.ldw.bhttp.ParameterizedTypeImpl;
 import com.ldw.bhttp.annotation.Form;
 import com.ldw.bhttp.annotation.GET;
 import com.ldw.bhttp.annotation.Json;
@@ -26,8 +24,6 @@ import com.ldw.bhttp.annotation.Query;
 import com.ldw.bhttp.callback.Consumer;
 import com.ldw.bhttp.callback.Observer;
 import com.ldw.bhttp.entry.MyResponse;
-import com.ldw.bhttp.httpsend.HttpSend;
-import com.ldw.bhttp.ParameterizedTypeImpl;
 import com.ldw.bhttp.param.Param;
 import com.ldw.bhttp.param.ParamType;
 import com.ldw.bhttp.parse.Parse;
@@ -62,9 +58,9 @@ import okhttp3.Response;
  * @date 2020/5/26 19:10
  * @user 威威君
  */
-public class OkHttp<T> {
+public class BaseBHttp<T> {
     // private static LinkedHashMap<String, Object> hashMap = new LinkedHashMap<>();
-    private static final Map<Method, OkHttp<?>> serviceMethodCache = new ConcurrentHashMap<>();
+    private static final Map<Method, BaseBHttp<?>> serviceMethodCache = new ConcurrentHashMap<>();
     private static OkHttpClient okHttpClient = null;
     private Param param = new Param();
     private Parse<?> parse;
@@ -101,10 +97,10 @@ public class OkHttp<T> {
     }
 
     public static void init(OkHttpClient okHttpClient) {
-        if (OkHttp.okHttpClient != null) {
+        if (BaseBHttp.okHttpClient != null) {
             throw new RuntimeException("只能初始化一次 OkHttpClient");
         }
-        OkHttp.okHttpClient = okHttpClient;
+        BaseBHttp.okHttpClient = okHttpClient;
     }
 
     public static void setDebug(boolean b) {
@@ -119,19 +115,19 @@ public class OkHttp<T> {
         return param;
     }
 
-    public OkHttp(Method method, Object[] args, boolean isRetrofit) {
+    public BaseBHttp(Method method, Object[] args, boolean isRetrofit) {
         if (isRetrofit)
             loadService(method, args);
     }
 
-    public OkHttp() {
+    public BaseBHttp() {
 
     }
 
     //###########################################请求方法相关#################################################################
     @NotNull
-    public static OkHttp<?> postFrom(@NotNull String s) {
-        OkHttp<?> client = new OkHttp<>();
+    public static BaseBHttp<?> postFrom(@NotNull String s) {
+        BaseBHttp<?> client = new BaseBHttp<>();
         client.param.setUrl(s);
         client.param.setMethod(com.ldw.bhttp.param.Method.POST);
         client.param.setParamType(ParamType.Form);
@@ -139,36 +135,50 @@ public class OkHttp<T> {
     }
 
     @NotNull
-    public static OkHttp<?> postJson(String url) {
-        OkHttp<?> client = new OkHttp<>();
+    public static BaseBHttp<?> postJson(String url) {
+        BaseBHttp<?> client = new BaseBHttp<>();
         client.param.setUrl(url);
         client.param.setMethod(com.ldw.bhttp.param.Method.POST);
         return client;
     }
-
+    @NotNull
+    public static BaseBHttp<?> get(String url) {
+        BaseBHttp<?> client = new BaseBHttp<>();
+        client.param.setUrl(url);
+        client.param.setMethod(com.ldw.bhttp.param.Method.GET);
+        return client;
+    }
     @NotNull
     @SuppressWarnings("unchecked")
-    public OkHttp<?> add(String k, Object v) {
+    public BaseBHttp<?> add(String k, Object v) {
         param.add(k, v);
         return this;
     }
 
     @NotNull
     @SuppressWarnings("unchecked")
-    public <D> OkHttp<D> asObject(Class<D> tClass) {
+    public <D> BaseBHttp<D> asObject(Class<D> tClass) {
         // returnType = new TypeToken<D>() {}.getType();
         this.tClass = tClass;
-        return (OkHttp<D>) this;
+        return (BaseBHttp<D>) this;
     }
 
     @NotNull
     @SuppressWarnings("unchecked")
-    public <D> OkHttp<MyResponse<D>> asResponse(Class<D> tClass) {
+    public <D> BaseBHttp<MyResponse<D>> asResponse(Class<D> tClass) {
         this.tClass = tClass;
         returnType = new TypeToken<MyResponse<D>>() {
         }.getType();
-        return (OkHttp<MyResponse<D>>) this;
+        return (BaseBHttp<MyResponse<D>>) this;
     }
+
+    @NotNull
+    @SuppressWarnings("unchecked")
+    public  BaseBHttp<String> asString() {
+        this.tClass = String.class;
+        return (BaseBHttp<String>) this;
+    }
+
     //#############################################################################################################################
 
 
@@ -182,7 +192,7 @@ public class OkHttp<T> {
                     public Object invoke(Object proxy, Method method, @Nullable Object[] args)
                             throws Throwable {
                         Type returnType = method.getGenericReturnType();
-                        OkHttp<?> result = serviceMethodCache.get(method);
+                        BaseBHttp<?> result = serviceMethodCache.get(method);
                         if (result != null) {
                             LogUtils.logd("缓存读取");
                             result.reLoadParam(method, args);
@@ -191,7 +201,7 @@ public class OkHttp<T> {
                         synchronized (serviceMethodCache) {
                             result = serviceMethodCache.get(method);
                             if (result == null) {
-                                result = new OkHttp(method, args, true);
+                                result = new BaseBHttp(method, args, true);
                                 serviceMethodCache.put(method, result);
                             }
                         }
@@ -287,7 +297,7 @@ public class OkHttp<T> {
         });
     }
 
-    public OkHttp<T> to(Activity activity) {
+    public BaseBHttp<T> to(Activity activity) {
         if (activity instanceof AppCompatActivity) {
             AppCompatActivity appCompatActivity = (AppCompatActivity) activity;
             return to(appCompatActivity.getLifecycle());
@@ -300,20 +310,20 @@ public class OkHttp<T> {
 
     }
 
-    public OkHttp<T> to(Lifecycle lifecycle) {
+    public BaseBHttp<T> to(Lifecycle lifecycle) {
         if (lifecycle != null) {
             addLifeLis(lifecycle);
         }
         return this;
     }
 
-    public OkHttp<T> to(Fragment fragment) {
+    public BaseBHttp<T> to(Fragment fragment) {
         to(fragment.getLifecycle());
         return this;
     }
     //############################################################################################################################
 
-
+    @SuppressWarnings("unchecked")
     public void subscribe(final Observer<T> observer) {
         //parse = new Parse<>(method);
         observer.onSubscribe();
@@ -344,13 +354,7 @@ public class OkHttp<T> {
                     parse = new Parse<>();
                     String s = response.body().string();
                     T convert = null;
-                    if (returnType != null && tClass != null) {
-                        convert = new Gson().fromJson(s, new ParameterizedTypeImpl(MyResponse.class, tClass));
-                    } else if (returnType != null) {
-                        convert = (T) parse.convert(returnType, s);
-                    } else if (tClass != null) {
-                        convert = (T) parse.convert(tClass, s);
-                    }
+                    convert = convert(s, returnType, tClass);
                     LogUtils.logd("convert");
                     LogUtils.logd(response);
                     T finalConvert = convert;
@@ -366,7 +370,7 @@ public class OkHttp<T> {
         }
     }
 
-
+    @SuppressWarnings("unchecked")
     public void subscribe(Consumer<T> onNext, Consumer<? super Throwable> onError) {
         call = getOkHttpClient().newCall(param.getRequest());
         if (state == state_OK) {
@@ -394,13 +398,7 @@ public class OkHttp<T> {
                     parse = new Parse<>();
                     String s = response.body().string();
                     T convert = null;
-                    if (returnType != null && tClass != null) {
-                        convert = new Gson().fromJson(s, new ParameterizedTypeImpl(MyResponse.class, tClass));
-                    } else if (returnType != null) {
-                        convert = (T) parse.convert(returnType, s);
-                    } else if (tClass != null) {
-                        convert = (T) parse.convert(tClass, s);
-                    }
+                    convert = convert(s, returnType, tClass);
                     //Response<A> responseA = fromJson(result, new ParameterizedTypeImpl(Response.class, A.class));
                     LogUtils.logd("convert");
                     LogUtils.logd(response);
@@ -415,6 +413,22 @@ public class OkHttp<T> {
             });
         }
 
+    }
+
+    @SuppressWarnings("unchecked")
+    private T convert(String s, Type returnType, Class<?> tClass) {
+        T convert = null;
+        if (returnType != null && tClass != null) {
+            convert = new Gson().fromJson(s, new ParameterizedTypeImpl(MyResponse.class, tClass));
+        } else if (returnType != null) {
+            convert = new Gson().fromJson(s, returnType);
+        } else if (tClass != null) {
+            if (tClass == String.class) {
+                convert = (T) s;
+            }else
+            convert = (T) new Gson().fromJson(s, tClass);
+        }
+        return convert;
     }
 
     private Handler handler = new Handler(Looper.getMainLooper(), msg -> {

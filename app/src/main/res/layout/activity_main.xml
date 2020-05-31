@@ -11,37 +11,67 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
         <Button
             android:id="@+id/clear"
-            android:onClick="clear"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="clear"
             android:text="清空" />
+
         <Button
             android:id="@+id/get"
-            android:onClick="get"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="get"
             android:text="GET" />
 
         <Button
             android:id="@+id/post"
-            android:onClick="post"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="post"
             android:text="POST" />
+
         <Button
-        android:id="@+id/response"
-        android:onClick="response"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="asResponse" />
+            android:id="@+id/response"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="response"
+            android:text="asResponse" />
+
+        <Button
+            android:id="@+id/asString"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="asString"
+            android:text="字符串" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="asString"
+            android:text="" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="asString"
+            android:text="" />
+
+        <EditText
+            android:id="@+id/ei" android:textColor="#FFFFFF"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:onClick="asString"
+            android:text="" />
     </LinearLayout>
 
     <EditText
-        android:gravity="top"
+        android:layout_weight="1"
         android:id="@+id/ed"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
+        android:gravity="top"
         android:textColor="#FFFFFF" />
 </LinearLayout>

@@ -17,10 +17,10 @@ android {
 
         javaCompileOptions {
             annotationProcessorOptions {
-                arguments = [
-                        bhttp_name: 'OkHttp',
-//                        package_name: 'com.bhttp',
-                ]
+//                arguments = [
+//                        //bhttp_name: 'OkHttp',
+////                        package_name: 'com.bhttp',
+//                ]
             }
         }
     }

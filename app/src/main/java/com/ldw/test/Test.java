@@ -2,7 +2,8 @@ package com.ldw.test;
 
 import androidx.annotation.NonNull;
 
-import com.ldw.bhttp.OkHttp;
+
+import com.bhttp.wrapper.generator.BHttp;
 import com.ldw.bhttp.callback.Consumer;
 import com.ldw.bhttp.callback.Observer;
 import com.ldw.bhttp.entry.MyResponse;
@@ -80,7 +81,7 @@ public class Test {
 
                     }
                 });*/
-        OkHttp.postJson("")
+        BHttp.postJson("")
                 .add("id","")
                 .asResponse(String.class)
                 .subscribe(new Observer<MyResponse<String>>() {
@@ -107,7 +108,7 @@ public class Test {
         for (int i = 0; i < 111; i++) {
             
         }
-        OkHttp.postJson("http://192.168.1.3:8022//test/")
+        BHttp.postJson("http://192.168.1.3:8022//test/")
                 .add("id","666")
                 .asObject(String.class)
                 .subscribe(new Consumer<String>() {
@@ -121,7 +122,7 @@ public class Test {
 
                     }
                 });
-        OkHttp.postJson("")
+        BHttp.postJson("")
                 .add("id","")
                 .asResponse(String.class)
                 .subscribe(new Observer<MyResponse<String>>() {
