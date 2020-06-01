@@ -98,7 +98,7 @@ public class BaseBHttp<T> {
 
     public static void init(OkHttpClient okHttpClient) {
         if (BaseBHttp.okHttpClient != null) {
-            throw new RuntimeException("只能初始化一次 OkHttpClient");
+            throw new RuntimeException("OkHttpClient Can only be initialized once");
         }
         BaseBHttp.okHttpClient = okHttpClient;
     }
@@ -107,7 +107,7 @@ public class BaseBHttp<T> {
         LogUtils.setDebug(b);
     }
 
-    public static void setDefaultDomain(@NotNull String s) {
+    public static void setDefaultDomain( String s) {
         Param.setDefaultDomain(s);
     }
 
@@ -121,7 +121,7 @@ public class BaseBHttp<T> {
     }
 
     public BaseBHttp() {
-
+        setDefaultDomain(null);
     }
 
     //###########################################请求方法相关#################################################################

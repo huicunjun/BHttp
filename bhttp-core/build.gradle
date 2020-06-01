@@ -54,5 +54,5 @@ dependencies {
     implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.7.2'
     implementation 'com.google.code.gson:gson:2.8.6'
 
-
+    implementation 'com.github.huicunjun:bhttp-annotation-test:0.2'
 }

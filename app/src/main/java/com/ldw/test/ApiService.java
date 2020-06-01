@@ -14,14 +14,14 @@ import com.ldw.bhttp.annotation.Query;
 public interface ApiService {
     // @GET("http://192.168.1.3:8022//test/")
     @GET("test/")
-    BHttp<Response<String>> test(@Query("id") String id);
+    BHttp<IResponse<String>> test(@Query("id") String id);
 
     @GET("http://gdptdad.com/download/app-release.apk")
-    BHttp<Response<String>> download(@Query("id") String id);
+    BHttp<IResponse<String>> download(@Query("id") String id);
 
     @GET("http://192.168.1.3:8022//test/")
-    BHttp<Response<Bean>> login(String id);
+    BHttp<IResponse<Bean>> login(String id);
 
     @POST("SSdgdsgS")
-    BHttp<Response<String>> order(String id);
+    BHttp<IResponse<String>> order(String id);
 }

@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        BHttp.setDefaultDomain("http://192.168.1.3:8022/")
+       // BHttp.setDefaultDomain("")
         BHttp.setDebug(true)
     }
 
@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity() {
         for (i in 0..3) {
             BHttp.postJson("http://192.168.1.3:8022//test/asResponse")
                 .add("id", "666")
-                .asResponse(Student::class.java)
+                .asIResponse(Student::class.java)
                 .subscribe(
                     {
                         ed.append("${it.toString()}  i")
@@ -96,12 +96,12 @@ class MainActivity : AppCompatActivity() {
         BHttp.create(ApiService::class.java)
             .download("test")
             .to(this)
-            .subscribe(object : Observer<Response<String?>> {
+            .subscribe(object : Observer<IResponse<String?>> {
                 override fun onSubscribe() {
 
                 }
 
-                override fun onNext(stringMyResponse: Response<String?>) {
+                override fun onNext(stringMyResponse: IResponse<String?>) {
                     //  Toast.makeText(this@MainActivity,stringMyResponse.data, Toast.LENGTH_SHORT).show()
                     ed.setText(Gson().toJson(stringMyResponse))
                 }

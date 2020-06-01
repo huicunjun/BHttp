@@ -54,5 +54,5 @@ dependencies {
 
 
     kapt project(path: ':bhttp-compiler')
-    implementation project(path: ':bhttp-annotation')
+    implementation 'com.github.huicunjun:bhttp-annotation-test:0.2'
 }

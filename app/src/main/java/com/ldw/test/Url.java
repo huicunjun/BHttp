@@ -1,6 +1,7 @@
 package com.ldw.test;
 
-import com.ldw.bhttp.annotation.DefaultDomain;
+
+import com.ldw.bhttp_annotation.DefaultDomain;
 
 /**
  * @date 2020/5/28 9:19
@@ -9,5 +10,5 @@ import com.ldw.bhttp.annotation.DefaultDomain;
 
 public class Url {
     @DefaultDomain
-    String host = "ss";
+   public static String  host = "http://192.168.1.3:8022/";
 }

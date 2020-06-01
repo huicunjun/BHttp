@@ -1,6 +1,7 @@
 package com.ldw.bhttp.compiler
 
-import com.ldw.bhttp.annotation.DefaultDomain
+import com.ldw.bhttp_annotation.DefaultDomain
+import com.ldw.bhttp_annotation.Parser
 import com.squareup.javapoet.JavaFile
 import com.squareup.javapoet.MethodSpec
 import com.squareup.javapoet.TypeSpec
@@ -13,8 +14,9 @@ import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.Filer
 import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.RoundEnvironment
-import javax.lang.model.element.Modifier
-import javax.lang.model.element.TypeElement
+import javax.lang.model.SourceVersion
+import javax.lang.model.element.*
+import javax.lang.model.util.Elements
 
 /**
  * @date 2020/5/28 10:23
@@ -22,14 +24,16 @@ import javax.lang.model.element.TypeElement
  */
 class KotlinProcessor : AbstractProcessor() {
     var filer: Filer? = null
+    var elementUtils: Elements? = null
 
     @Synchronized
     override fun init(processingEnv: ProcessingEnvironment) {
         super.init(processingEnv)
         filer = processingEnv.filer
+        elementUtils = processingEnv.elementUtils
         val map = processingEnv.options
-       // className = map["bhttp_name"] ?: "BHttp"
-      //  packname = map["package_name"] ?: "com.bhttp.wrapper.generator"
+        // className = map["bhttp_name"] ?: "BHttp"
+        //  packname = map["package_name"] ?: "com.bhttp.wrapper.generator"
     }
 
     override fun process(
@@ -38,6 +42,7 @@ class KotlinProcessor : AbstractProcessor() {
     ): Boolean {
         try {
             generate()
+
             createByString(roundEnv!!)
         } catch (e: IOException) {
             e.printStackTrace()
@@ -72,10 +77,40 @@ class KotlinProcessor : AbstractProcessor() {
     }
 
     private fun createByString(roundEnv: RoundEnvironment) {
-        for (element in roundEnv.getElementsAnnotatedWith(
-            DefaultDomain::class.java)) {
-            val objectType = element.simpleName.toString()
+        roundEnv.getElementsAnnotatedWith(Parser::class.java).forEach {
+            val typeElement = it as TypeElement
+            // asResponseName = typeElement.simpleName.toString()
+            val annotation = typeElement.getAnnotation(Parser::class.java)
+            val name: String = annotation.name
+            asResponseFullName = typeElement.qualifiedName.toString()
+            asResponseMethodName = typeElement.simpleName.toString()
+            println("typeElement.simpleName")
+            println(typeElement.simpleName)
+            val packageOf = elementUtils?.getPackageOf(typeElement)
+            //println(packageOf)
+            //  checkParserValidClass(typeElement)
+            // parserAnnotatedClass.add(typeElement)
         }
+
+        val defaultDomainSet = roundEnv.getElementsAnnotatedWith(DefaultDomain::class.java)
+        defaultDomainSet.forEach {
+            val typeElement = it as VariableElement
+           val toString = typeElement.simpleName.toString()
+            //typeElement.g
+           // typeElement.
+          // defaultDomain = "${typeElement.qualifiedName.toString()}.${typeElement.simpleName.toString()}"
+            println("toString")
+            println(toString)
+           // println( ClassName.get(typeElement.enclosingElement.asType()))
+            println(typeElement.enclosingElement.asType())
+            defaultDomain = "${typeElement.enclosingElement.asType()}.${toString}"
+        }
+
+        /* for (element in roundEnv.getElementsAnnotatedWith(
+             Parser::class.java)) {
+             val objectType = element.simpleName.toString()
+           //  asResponseName = element.simpleName.toString()
+         }*/
         try {
             val source = processingEnv.filer.createSourceFile("$packname.$className")
             val outputStream = source.openOutputStream()
@@ -88,25 +123,42 @@ class KotlinProcessor : AbstractProcessor() {
         }
     }
 
+    override fun getSupportedSourceVersion(): SourceVersion {
+        return SourceVersion.latestSupported()
+    }
 
     override fun getSupportedAnnotationTypes(): Set<String>? {
         val annotations: MutableSet<String> =
             HashSet()
         annotations.add(DefaultDomain::class.java.canonicalName)
+        annotations.add(Parser::class.java.canonicalName)
         return annotations
     }
 
     companion object {
-        var className: String? = "BHttp"
-        var packname : String? = "com.bhttp.wrapper.generator"
+        var defaultDomain = "null" //如Url.domaun
+
+        var asResponseFullName = "MyResponse"
+        var asResponseMethodName = "asResponse"
+
+        var className = "BHttp"
+        var packname = "com.bhttp.wrapper.generator"
         private fun replaceClass(ss: String): String {
-           return ss.replace("BaseBHttp","$className").replace("package com.ldw.bhttp;", "package $packname;")
+            return ss.replace("BaseBHttp", "$className")
+                .replace("package com.ldw.bhttp;", "package $packname;")
+                .replace("import com.ldw.bhttp.entry.MyResponse;", "")
+                .replace("MyResponse", asResponseFullName)
+                .replace("setDefaultDomain(null);", "setDefaultDomain($defaultDomain);")
+                .replace("asResponse", "as$asResponseMethodName")
         }
 
-       // var data = SimpleDateFormat().format("yyyy/MM/dd HH:ss")//2020/5/26 19:10
+        // var data = SimpleDateFormat().format("yyyy/MM/dd HH:ss")//2020/5/26 19:10
         var ss = """
-            
- package com.ldw.bhttp;
+              
+              
+              
+              
+package com.ldw.bhttp;
 
 import android.app.Activity;
 import android.os.Handler;
@@ -206,7 +258,7 @@ public class BaseBHttp<T> {
 
     public static void init(OkHttpClient okHttpClient) {
         if (BaseBHttp.okHttpClient != null) {
-            throw new RuntimeException("只能初始化一次 OkHttpClient");
+            throw new RuntimeException("OkHttpClient Can only be initialized once");
         }
         BaseBHttp.okHttpClient = okHttpClient;
     }
@@ -215,7 +267,7 @@ public class BaseBHttp<T> {
         LogUtils.setDebug(b);
     }
 
-    public static void setDefaultDomain(@NotNull String s) {
+    public static void setDefaultDomain( String s) {
         Param.setDefaultDomain(s);
     }
 
@@ -229,7 +281,7 @@ public class BaseBHttp<T> {
     }
 
     public BaseBHttp() {
-
+        setDefaultDomain(null);
     }
 
     //###########################################请求方法相关#################################################################
@@ -547,8 +599,10 @@ public class BaseBHttp<T> {
     });
 
 }
-           
-            
+
+
+
+          
             
 
 

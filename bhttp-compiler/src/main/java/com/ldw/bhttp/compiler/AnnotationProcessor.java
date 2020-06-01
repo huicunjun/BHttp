@@ -1,6 +1,6 @@
 package com.ldw.bhttp.compiler;
 
-import com.ldw.bhttp.annotation.DefaultDomain;
+import com.ldw.bhttp_annotation.Parser;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
@@ -10,8 +10,6 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
@@ -39,6 +37,8 @@ public class AnnotationProcessor extends AbstractProcessor {
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         System.out.println("AnnotationProcessor");
 
+        /*Set<? extends Element> elementsAnnotatedWith = roundEnv.getElementsAnnotatedWith(Parser.class);
+        elementsAnnotatedWith.g*/
         try {
             generateHelloworld();
             yuansheng(roundEnv);
@@ -76,11 +76,13 @@ public class AnnotationProcessor extends AbstractProcessor {
 
 
         // for each javax.lang.model.element.Element annotated with the CustomAnnotation
+/*
         for (Element element : roundEnv.getElementsAnnotatedWith(DefaultDomain.class)) {
             String objectType = element.getSimpleName().toString();
             // this is appending to the return statement
             builder.append(objectType).append(" says hello!\\n");
         }
+*/
 
 
         builder.append("\";\n") // end return
@@ -111,7 +113,7 @@ public class AnnotationProcessor extends AbstractProcessor {
     @Override
     public Set<String> getSupportedAnnotationTypes() {
         Set<String> annotations = new HashSet<>();
-        annotations.add(DefaultDomain.class.getCanonicalName());
+   //     annotations.add(DefaultDomain.class.getCanonicalName());
         return annotations;
     }
 

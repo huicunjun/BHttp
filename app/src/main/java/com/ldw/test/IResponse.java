@@ -1,10 +1,13 @@
 package com.ldw.test;
 
+import com.ldw.bhttp_annotation.Parser;
+
 /**
- * @date 2020/5/27 14:44
+ * @date 2020/5/31 20:16
  * @user 威威君
  */
-public class Response<D> {
+@Parser(name = "YYResponse")
+public class IResponse<D> {
     public int code;
     public String msg;
     public D data;
