@@ -4,12 +4,13 @@
 
 ### 简介
 
-本项目是一个不依赖Retrofit和Rxjava，但实现了Retrofit的声明式Api，以及Rxjava的链式调用线程自动切换，
-功能涵盖请求缓存，请求加密，公共参数，Token时效，自定义解析数据等。具有以下特点：
+本项目不依赖Retrofit和Rxjava，但参考了Retrofit源码，实现了Retrofit的声明式Api，以及Rxjava的链式调用线程自动切换，
+功能涵盖请求缓存，请求加密，公共参数，自定义请求，自定义解析器等。具有以下特点：
 
-* 快：方法封装极简，链式调用一气呵成。
-* 全：既可以使用单独的链式请求，也可以使用Retrofit的声明式接口写法。
-* 轻：项目依赖少，仅仅依赖了Okhttp，Gson
+* 简：方法封装极简，使用成本极低，链式调用一气呵成。
+* 全：请求缓存，请求加密，公共参数，自定义请求，自定义解析器等，功能涵盖多数业务场景。
+* 强：链式请求，Retrofit的声明式接口写法均支持。
+* 轻：项目依赖少，剔除OKHttp与Gson，开发者可自行选择依赖。
 
 ### 注意
 从Bhttp 0.5开始完全剔除Okhttp与Gson的依赖，需要开发者自行依赖。
@@ -39,12 +40,11 @@ implementation 'com.google.code.gson:gson:2.8.6' //必须
 ```html
         BHttp.setDebug(true);//开启debug 打印网络请求日志
         BHttp.init(okHttpClient);//可根据需要传入开发者的okHttpClient  非必须
-        BHttp.setDefaultDomain("http://192.168.1.3:8022/");//设置默认请求域名
 
-        也支持在您的域名常量使用注解方式声明
+        在您的域名常量使用注解方式声明
         public class Url {
             @DefaultDomain
-            public static String  host = "http://192.168.1.2:8022";
+            public static String  host = "http://gdptdad.com";
         }
 
 ```
