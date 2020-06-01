@@ -20,13 +20,22 @@
 ### 1.  Gradle依赖
 
 ```html
-implementation 'com.github.huicunjun:BHttp:lastversion'
+implementation 'com.github.huicunjun:BHttp:0.7'
+annotationProcessor 'com.github.huicunjun:bhttp-compiler:0.7'
+implementation 'com.github.huicunjun:bhttp-annotation:0.2'
 ```
 ### 2.  初始化BHttp
 
 ```html
         BHttp.setDebug(true);//开启debug
         BHttp.setDefaultDomain("http://192.168.1.3:8022/");//设置默认请求域名
+
+        也支持在您的域名常量使用注解方式声明
+        public class Url {
+            @DefaultDomain
+            public static String  host = "http://192.168.1.2:8022";
+        }
+
 ```
 ### 3.  Retrofit式调用
 
@@ -91,4 +100,4 @@ implementation 'com.github.huicunjun:BHttp:lastversion'
   
                 
 ### 关于项目
-本项目一直是个人自用网络请求库。之前未尝试单独剥离出来。观摩了 [RxHttp](https://github.com/liujingxing/okhttp-RxHttp "RxHttp")有感，发现请求三部曲非常棒，能做到上手成本低，功能全，这点令我非常激动！于是乎有感而作！
+本项目一直是个人自用网络请求库。之前未尝试单独剥离出来。观摩了 [RxHttp](https://github.com/liujingxing/okhttp-RxHttp "RxHttp")有感，发现请求三部曲非常棒，能做到上手成本低，功能全，于是乎有感而作！
