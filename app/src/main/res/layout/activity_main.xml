@@ -14,6 +14,7 @@
 
         <Button
             android:id="@+id/clear"
+            style="@style/AppTheme1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="clear"
@@ -21,6 +22,7 @@
 
         <Button
             android:id="@+id/get"
+            style="@style/AppTheme1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="get"
@@ -28,13 +30,22 @@
 
         <Button
             android:id="@+id/post"
+            style="@style/AppTheme1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="post"
-            android:text="POST" />
+            android:onClick="postFrom"
+            android:text="postFrom" />
+
+        <Button
+            style="@style/AppTheme1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="postJson"
+            android:text="postJson" />
 
         <Button
             android:id="@+id/response"
+            style="@style/AppTheme1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="response"
@@ -42,36 +53,45 @@
 
         <Button
             android:id="@+id/asString"
+            style="@style/AppTheme1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="asString"
-            android:text="字符串" />
+            android:text="asString" />
 
         <Button
+            style="@style/AppTheme1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="asString"
-            android:text="" />
-
+            android:onClick="putPath"
+            android:text="PutRestful" />
         <Button
+            style="@style/AppTheme1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="deletePath"
+            android:text="deletePath" />
+        <Button
+            style="@style/AppTheme1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="asString"
             android:text="" />
 
         <EditText
-            android:id="@+id/ei" android:textColor="#FFFFFF"
+            android:id="@+id/ei"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:onClick="asString"
-            android:text="" />
+            android:text=""
+            android:textColor="#FFFFFF" />
     </LinearLayout>
 
     <EditText
-        android:layout_weight="1"
         android:id="@+id/ed"
         android:layout_width="0dp"
         android:layout_height="match_parent"
+        android:layout_weight="1"
         android:gravity="top"
         android:textColor="#FFFFFF" />
 </LinearLayout>

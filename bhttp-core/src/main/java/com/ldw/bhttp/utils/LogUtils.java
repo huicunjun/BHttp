@@ -21,10 +21,21 @@ public class LogUtils {
         Request request = response.request();
         StringBuilder builder = new StringBuilder()
                 .append("<------ ")
-                .append(request.body() + " ")
+                .append("\n")
+                .append( " request Url")
+                .append("\n")
+                .append(request.url() + " ")
+                .append("\n")
+                .append( " request body")
+                .append("\n")
+              //  .append(request.body().contentType().toString() + "  ")
+              //  .append("\n")
                 .append(" request end Method=")
+                .append("\n")
                 .append(request.method())
+                .append("\n")
                 .append(" Code=").append(response.code())
+                .append("\n")
                 .append(" ------>");
         System.out.println(builder.toString());
     }

@@ -8,4 +8,11 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="AppTheme1">
+        <item name="android:textColor">#000000</item>
+        <item name="android:padding">15dp</item>
+        <item name="android:textAllCaps">false</item>
+<!--        <item name="android:background">#999</item>-->
+    </style>
+
 </resources>

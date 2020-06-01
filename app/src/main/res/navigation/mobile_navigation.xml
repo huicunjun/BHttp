@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_1">
+
+    <fragment
+        android:id="@+id/navigation_1"
+        android:name="com.ldw.test.ui.default.DefaultFragment"
+        android:label="@string/t1"
+        tools:layout="@layout/fragment_default" />
+
+    <fragment
+        android:id="@+id/navigation_2"
+        android:name="com.ldw.test.ui.retrofit.RetrofitFragment"
+        android:label="@string/t2"
+        tools:layout="@layout/fragment_retrofit" />
+
+</navigation>

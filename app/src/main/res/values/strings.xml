@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">okhttp-bhttp</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="t1">普通链式</string>
+    <string name="t2">Retrofit声明式</string>
 </resources>

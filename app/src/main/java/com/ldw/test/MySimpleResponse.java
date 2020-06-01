@@ -7,7 +7,7 @@ import com.ldw.bhttp_annotation.Parser;
  * @user 威威君
  */
 @Parser(name = "YYResponse")
-public class IResponse<D> {
+public class MySimpleResponse<D> {
     public int code;
     public String msg;
     public D data;

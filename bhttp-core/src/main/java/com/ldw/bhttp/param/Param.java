@@ -1,6 +1,10 @@
 package com.ldw.bhttp.param;
 
 
+import androidx.annotation.NonNull;
+
+import com.google.gson.Gson;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -35,7 +39,7 @@ public class Param {
     }
 
     public void setDomain(String domain) {
-        this.domain = domain;
+        Param.domain = domain;
     }
 
     public void setUrl(String url) {
@@ -54,6 +58,15 @@ public class Param {
             if (domain == null) {
                 domain = getDomain();
             }
+            if (!domain.endsWith("/")) {
+                domain = domain + "/";
+            }
+            if (url.startsWith("/")) {
+                url = url.substring(1);
+            }
+            if (url.endsWith("/")) {
+                url = url.substring(0, url.length() - 1);
+            }
             return domain + url;
         }
     }
@@ -71,7 +84,7 @@ public class Param {
             //get请求可以使用HttpUrl特殊处理
             HttpUrl.Builder httpUrlbuilder = HttpUrl.parse(finalURL).newBuilder();
             for (String key : hashMap.keySet()) {
-                Object v = hashMap.get(key).v;
+                Object v = Objects.requireNonNull(hashMap.get(key)).v;
                 if (Objects.requireNonNull(hashMap.get(key)).isEncode)
                     httpUrlbuilder.addEncodedQueryParameter(key, v.toString());
                 else
@@ -79,19 +92,31 @@ public class Param {
             }
             builder.url(httpUrlbuilder.build()).get();
         } else if (method == Method.POST) {
-            if (paramType == ParamType.Form) {
-                FormBody.Builder formBodybuilder = new FormBody.Builder();
-                for (String key : hashMap.keySet()) {
-                    Object v = Objects.requireNonNull(hashMap.get(key)).v;
-                    if (Objects.requireNonNull(hashMap.get(key)).isEncode)
-                        formBodybuilder.addEncoded(key, v.toString());
-                    else
-                        formBodybuilder.add(key, v.toString());
-                }
-                this.builder.post(formBodybuilder.build());
-            }
+            this.builder.post(resolveRequestBody(paramType));
+         /*   if (paramType.isForm()) {
+                this.builder.post(buildFormBody().build());
+            } else if (paramType.isJson()) {
+                this.builder.post(buildJsonRequestBody());
+            }*/
         } else if (method == Method.PUT) {
-            builder.put(RequestBody.create("new", MediaType.parse("application/x-www-form-urlencoded")));
+            builder.put(resolveRequestBody(paramType));
+          /*  if (paramType.isForm()) {
+                builder.put(buildFormBody().build());
+            } else if (paramType.isJson()) {
+                this.builder.put(buildJsonRequestBody());
+            }*/
+            //todo
+        } else if (method == Method.DELETE) {
+            builder.delete(resolveRequestBody(paramType));
+           /* if (paramType.isForm()) {
+                builder.delete(buildFormBody().build());
+            }*/
+            //todo
+        } else if (method == Method.PATCH) {
+            builder.patch(resolveRequestBody(paramType));
+            //todo
+        } else if (method == Method.HEAD) {
+            builder.head();
             //todo
         }
         //解析请求参数
@@ -101,13 +126,66 @@ public class Param {
     }
 
     @NotNull
+    private RequestBody resolveRequestBody(ParamType paramType) {
+        if (paramType.isForm()) {
+            return buildFormBody().build();
+        } else if (paramType.isQuery()) {
+            return buildFormBody().build();
+        } else if (paramType.isJson()) {
+            return buildJsonRequestBody();
+        } else if (paramType.isPath()) {
+            return buildPathRequestBody();
+        }
+        return null;
+    }
+
+    @NotNull
+    private RequestBody buildJsonRequestBody() {
+        HashMap<String, Object> jsonMaps = new HashMap<>();
+        for (String key : hashMap.keySet()) {
+            Object v = Objects.requireNonNull(hashMap.get(key)).v;
+            jsonMaps.put(key, v);
+        }
+        return RequestBody.create(new Gson().toJson(jsonMaps), MediaType.parse("application/json;charset=utf-8"));
+    }
+
+    @NotNull
+    private RequestBody buildPathRequestBody() {
+        HashMap<String, Object> maps = new HashMap<>();
+
+        for (String key : hashMap.keySet()) {
+            Object v = Objects.requireNonNull(hashMap.get(key)).v;
+            maps.put(key, v);
+        }
+        String finalUrl = getFinalUrl();
+        finalUrl = finalUrl.replace(" ", "");
+        for (String key : maps.keySet()) {
+            finalUrl = finalUrl.replace("{" + key + "}", maps.get(key).toString());
+        }
+        builder.url(finalUrl);
+        return RequestBody.create(new byte[]{}, null);
+    }
+
+    private FormBody.Builder buildFormBody() {
+        FormBody.Builder formBodybuilder = new FormBody.Builder();
+        for (String key : hashMap.keySet()) {
+            Object v = Objects.requireNonNull(hashMap.get(key)).v;
+            if (Objects.requireNonNull(hashMap.get(key)).isEncode)
+                formBodybuilder.addEncoded(key, v.toString());
+            else
+                formBodybuilder.add(key, v.toString());
+        }
+        return formBodybuilder;
+    }
+
+    @NotNull
     public Param add(String k, Object v) {
         add(k, v, false);
         return this;
     }
 
     public void add(String k, Object v, boolean isEncode, ParamType paramType) {
-        hashMap.put(k,new ParameValue(k,v,isEncode));
+        hashMap.put(k, new ParameValue(k, v, isEncode));
         this.paramType = paramType;
     }
 
@@ -116,7 +194,7 @@ public class Param {
     }
 
     public void add(String k, Object v, boolean isEncode) {
-        hashMap.put(k,new ParameValue(k,v,isEncode));
+        hashMap.put(k, new ParameValue(k, v, isEncode));
     }
 
 /*    public <T> HttpSend<MyResponse<T>> asResponse(Class<T> tClass) {
@@ -148,6 +226,12 @@ public class Param {
             this.key = key;
             this.v = v;
             this.isEncode = isEncode;
+        }
+
+        @NonNull
+        @Override
+        public String toString() {
+            return v.toString();
         }
     }
 }

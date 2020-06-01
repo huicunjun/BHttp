@@ -10,5 +10,5 @@ import com.ldw.bhttp_annotation.DefaultDomain;
 
 public class Url {
     @DefaultDomain
-   public static String  host = "http://192.168.1.3:8022/";
+   public static String  host = "http://192.168.1.2:8022";
 }

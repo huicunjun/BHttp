@@ -154,10 +154,7 @@ class KotlinProcessor : AbstractProcessor() {
 
         // var data = SimpleDateFormat().format("yyyy/MM/dd HH:ss")//2020/5/26 19:10
         var ss = """
-              
-              
-              
-              
+            
 package com.ldw.bhttp;
 
 import android.app.Activity;
@@ -267,7 +264,7 @@ public class BaseBHttp<T> {
         LogUtils.setDebug(b);
     }
 
-    public static void setDefaultDomain( String s) {
+    public static void setDefaultDomain(String s) {
         Param.setDefaultDomain(s);
     }
 
@@ -278,6 +275,7 @@ public class BaseBHttp<T> {
     public BaseBHttp(Method method, Object[] args, boolean isRetrofit) {
         if (isRetrofit)
             loadService(method, args);
+        setDefaultDomain(null);
     }
 
     public BaseBHttp() {
@@ -299,6 +297,92 @@ public class BaseBHttp<T> {
         BaseBHttp<?> client = new BaseBHttp<>();
         client.param.setUrl(url);
         client.param.setMethod(com.ldw.bhttp.param.Method.POST);
+        client.param.setParamType(ParamType.Json);
+        return client;
+    }
+    @NotNull
+    public static BaseBHttp<?> postPath(String url) {
+        BaseBHttp<?> client = new BaseBHttp<>();
+        client.param.setUrl(url);
+        client.param.setMethod(com.ldw.bhttp.param.Method.POST);
+        client.param.setParamType(ParamType.Path);
+        return client;
+    }
+    @NotNull
+    public static BaseBHttp<?> putFrom(@NotNull String s) {
+        BaseBHttp<?> client = new BaseBHttp<>();
+        client.param.setUrl(s);
+        client.param.setMethod(com.ldw.bhttp.param.Method.PUT);
+        client.param.setParamType(ParamType.Form);
+        return client;
+    }
+
+    @NotNull
+    public static BaseBHttp<?> putJson(String url) {
+        BaseBHttp<?> client = new BaseBHttp<>();
+        client.param.setUrl(url);
+        client.param.setMethod(com.ldw.bhttp.param.Method.PUT);
+        client.param.setParamType(ParamType.Json);
+        return client;
+    }
+    @NotNull
+    public static BaseBHttp<?> putPath(String url) {
+        BaseBHttp<?> client = new BaseBHttp<>();
+        client.param.setUrl(url);
+        client.param.setMethod(com.ldw.bhttp.param.Method.PUT);
+        client.param.setParamType(ParamType.Path);
+        return client;
+    }
+
+    @NotNull
+    public static BaseBHttp<?> deleteFrom(@NotNull String s) {
+        BaseBHttp<?> client = new BaseBHttp<>();
+        client.param.setUrl(s);
+        client.param.setMethod(com.ldw.bhttp.param.Method.DELETE);
+        client.param.setParamType(ParamType.Form);
+        return client;
+    }
+
+    @NotNull
+    public static BaseBHttp<?> deleteJson(String url) {
+        BaseBHttp<?> client = new BaseBHttp<>();
+        client.param.setUrl(url);
+        client.param.setMethod(com.ldw.bhttp.param.Method.DELETE);
+        client.param.setParamType(ParamType.Json);
+        return client;
+    }
+    @NotNull
+    public static BaseBHttp<?> deletePath(String url) {
+        BaseBHttp<?> client = new BaseBHttp<>();
+        client.param.setUrl(url);
+        client.param.setMethod(com.ldw.bhttp.param.Method.DELETE);
+        client.param.setParamType(ParamType.Path);
+        return client;
+    }
+
+    @NotNull
+    public static BaseBHttp<?> patchFrom(@NotNull String s) {
+        BaseBHttp<?> client = new BaseBHttp<>();
+        client.param.setUrl(s);
+        client.param.setMethod(com.ldw.bhttp.param.Method.PATCH);
+        client.param.setParamType(ParamType.Form);
+        return client;
+    }
+
+    @NotNull
+    public static BaseBHttp<?> patchJson(String url) {
+        BaseBHttp<?> client = new BaseBHttp<>();
+        client.param.setUrl(url);
+        client.param.setMethod(com.ldw.bhttp.param.Method.PATCH);
+        client.param.setParamType(ParamType.Json);
+        return client;
+    }
+    @NotNull
+    public static BaseBHttp<?> patchPath(String url) {
+        BaseBHttp<?> client = new BaseBHttp<>();
+        client.param.setUrl(url);
+        client.param.setMethod(com.ldw.bhttp.param.Method.PATCH);
+        client.param.setParamType(ParamType.Path);
         return client;
     }
     @NotNull
@@ -308,6 +392,7 @@ public class BaseBHttp<T> {
         client.param.setMethod(com.ldw.bhttp.param.Method.GET);
         return client;
     }
+
     @NotNull
     @SuppressWarnings("unchecked")
     public BaseBHttp<?> add(String k, Object v) {
@@ -334,7 +419,7 @@ public class BaseBHttp<T> {
 
     @NotNull
     @SuppressWarnings("unchecked")
-    public  BaseBHttp<String> asString() {
+    public BaseBHttp<String> asString() {
         this.tClass = String.class;
         return (BaseBHttp<String>) this;
     }
@@ -347,27 +432,23 @@ public class BaseBHttp<T> {
     public static <T> T create(final Class<T> service) {
         validateServiceInterface(service);
         return (T) Proxy.newProxyInstance(service.getClassLoader(), new Class<?>[]{service},
-                new InvocationHandler() {
-                    @Override
-                    public Object invoke(Object proxy, Method method, @Nullable Object[] args)
-                            throws Throwable {
-                        Type returnType = method.getGenericReturnType();
-                        BaseBHttp<?> result = serviceMethodCache.get(method);
-                        if (result != null) {
-                            LogUtils.logd("缓存读取");
-                            result.reLoadParam(method, args);
-                            return result;
-                        }
-                        synchronized (serviceMethodCache) {
-                            result = serviceMethodCache.get(method);
-                            if (result == null) {
-                                result = new BaseBHttp(method, args, true);
-                                serviceMethodCache.put(method, result);
-                            }
-                        }
+                (proxy, method, args) -> {
+                    Type returnType = method.getGenericReturnType();
+                    BaseBHttp<?> result = serviceMethodCache.get(method);
+                    if (result != null) {
+                        LogUtils.logd("缓存读取");
+                        result.reLoadParam(method, args);
                         return result;
-
                     }
+                    synchronized (serviceMethodCache) {
+                        result = serviceMethodCache.get(method);
+                        if (result == null) {
+                            result = new BaseBHttp(method, args, true);
+                            serviceMethodCache.put(method, result);
+                        }
+                    }
+                    return result;
+
                 });
     }
 
@@ -402,7 +483,7 @@ public class BaseBHttp<T> {
         for (int i = 0; i < parameterAnnotations.length; i++) {
             Annotation[] parameterAnnotation = parameterAnnotations[i];
             for (int j = 0; j < parameterAnnotation.length; j++) {
-                Annotation annotation = parameterAnnotation[i];
+                Annotation annotation = parameterAnnotation[j];
                 parseHttParam(annotation, args[i]);
             }
         }
@@ -431,7 +512,7 @@ public class BaseBHttp<T> {
         for (int i = 0; i < parameterAnnotations.length; i++) {
             Annotation[] parameterAnnotation = parameterAnnotations[i];
             for (int j = 0; j < parameterAnnotation.length; j++) {
-                Annotation annotation = parameterAnnotation[i];
+                Annotation annotation = parameterAnnotation[j];
                 parseHttParam(annotation, args[i]);
             }
         }
@@ -509,22 +590,25 @@ public class BaseBHttp<T> {
 
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                    if (state != state_OK)
-                        return;
-                    parse = new Parse<>();
-                    String s = response.body().string();
-                    T convert = null;
-                    convert = convert(s, returnType, tClass);
-                    LogUtils.logd("convert");
-                    LogUtils.logd(response);
-                    T finalConvert = convert;
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            observer.onNext(finalConvert);
-                            observer.onComplete();
-                        }
-                    });
+                    try {
+                        if (state != state_OK)
+                            return;
+                        parse = new Parse<>();
+                        String s = response.body().string();
+                        T convert = null;
+                        convert = convert(s, returnType, tClass);
+                        LogUtils.logd(response);
+                        T finalConvert = convert;
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                observer.onNext(finalConvert);
+                                observer.onComplete();
+                            }
+                        });
+                    } catch (Exception e) {
+                        observer.onError(e);
+                    }
                 }
             });
         }
@@ -553,22 +637,29 @@ public class BaseBHttp<T> {
 
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                    if (state != state_OK)
-                        return;
-                    parse = new Parse<>();
-                    String s = response.body().string();
-                    T convert = null;
-                    convert = convert(s, returnType, tClass);
-                    //Response<A> responseA = fromJson(result, new ParameterizedTypeImpl(Response.class, A.class));
-                    LogUtils.logd("convert");
-                    LogUtils.logd(response);
-                    T finalConvert = convert;
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            onNext.accept(finalConvert);
-                        }
-                    });
+                    try {
+                        if (state != state_OK)
+                            return;
+                        parse = new Parse<>();
+                        String s = response.body().string();
+                        T convert = null;
+                        convert = convert(s, returnType, tClass);
+                        LogUtils.logd(response);
+                        T finalConvert = convert;
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                onNext.accept(finalConvert);
+                            }
+                        });
+                    } catch (Exception e) {
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                onError.accept(e);
+                            }
+                        });
+                    }
                 }
             });
         }
@@ -577,6 +668,8 @@ public class BaseBHttp<T> {
 
     @SuppressWarnings("unchecked")
     private T convert(String s, Type returnType, Class<?> tClass) {
+        LogUtils.logd("请求结果：");
+        LogUtils.logd(s);
         T convert = null;
         if (returnType != null && tClass != null) {
             convert = new Gson().fromJson(s, new ParameterizedTypeImpl(MyResponse.class, tClass));
@@ -585,8 +678,8 @@ public class BaseBHttp<T> {
         } else if (tClass != null) {
             if (tClass == String.class) {
                 convert = (T) s;
-            }else
-            convert = (T) new Gson().fromJson(s, tClass);
+            } else
+                convert = (T) new Gson().fromJson(s, tClass);
         }
         return convert;
     }
@@ -599,14 +692,10 @@ public class BaseBHttp<T> {
     });
 
 }
-
-
-
-          
             
-
-
-"""
+            
+            
+        """.trimIndent()
     }
 
 }
