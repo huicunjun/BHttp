@@ -11,7 +11,8 @@
 * 全：既可以使用单独的链式请求，也可以使用Retrofit的声明式接口写法。
 * 轻：项目依赖少，仅仅依赖了Okhttp，Gson
 
-
+### 注意
+从Bhttp 0.5开始完全剔除Okhttp与Gson的依赖，需要开发者自行依赖。
 
 
 
@@ -23,6 +24,9 @@
 implementation 'com.github.huicunjun:BHttp:0.7'//BHttp核心依赖库
 annotationProcessor 'com.github.huicunjun:bhttp-compiler:0.7'//Bhttp生成库 kotlin项目请使用kapt
 implementation 'com.github.huicunjun:bhttp-annotation:0.2'//BHttp注解库
+
+implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.7.2'//必须
+implementation 'com.google.code.gson:gson:2.8.6' //必须
 ```
 ### 2.  初始化BHttp
 
