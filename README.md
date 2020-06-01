@@ -20,9 +20,9 @@
 ### 1.  Gradle依赖
 
 ```html
-implementation 'com.github.huicunjun:BHttp:0.7'
-annotationProcessor 'com.github.huicunjun:bhttp-compiler:0.7'
-implementation 'com.github.huicunjun:bhttp-annotation:0.2'
+implementation 'com.github.huicunjun:BHttp:0.7'//BHttp核心依赖库
+annotationProcessor 'com.github.huicunjun:bhttp-compiler:0.7'//Bhttp生成库 kotlin项目请使用kapt
+implementation 'com.github.huicunjun:bhttp-annotation:0.2'//BHttp注解库
 ```
 ### 2.  初始化BHttp
 
