@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -217,10 +218,10 @@ public class Param {
         hashMap.put(k, v);
     }*/
 
-    class ParameValue {
+    class ParameValue implements Serializable {
         public String key;
         public Object v;
-        public boolean isEncode = false;
+        public boolean isEncode;
 
         public ParameValue(String key, Object v, boolean isEncode) {
             this.key = key;

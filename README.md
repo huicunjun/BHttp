@@ -21,6 +21,12 @@
 ### 1.  Gradle依赖
 
 ```html
+    //编译版本
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
 implementation 'com.github.huicunjun:BHttp:0.7'//BHttp核心依赖库
 annotationProcessor 'com.github.huicunjun:bhttp-compiler:0.7'//Bhttp生成库 kotlin项目请使用kapt
 implementation 'com.github.huicunjun:bhttp-annotation:0.2'//BHttp注解库
@@ -31,7 +37,8 @@ implementation 'com.google.code.gson:gson:2.8.6' //必须
 ### 2.  初始化BHttp
 
 ```html
-        BHttp.setDebug(true);//开启debug
+        BHttp.setDebug(true);//开启debug 打印网络请求日志
+        BHttp.init(okHttpClient);//可根据需要传入开发者的okHttpClient  非必须
         BHttp.setDefaultDomain("http://192.168.1.3:8022/");//设置默认请求域名
 
         也支持在您的域名常量使用注解方式声明
