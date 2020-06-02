@@ -67,7 +67,7 @@ implementation 'com.google.code.gson:gson:2.8.6' //必须
 
 ```java
         public interface ApiService {
-            @GET("http://192.168.1.3:8022//test/")
+            @GET("test")
             BHttp<Response<String>> test(@Query(value = "id",encoded = true) String id);
         }
 
@@ -131,4 +131,12 @@ implementation 'com.google.code.gson:gson:2.8.6' //必须
 
                 
 ### 关于项目
-本项目一直是个人自用网络请求库。之前未尝试单独剥离出来。观摩了 [RxHttp](https://github.com/liujingxing/okhttp-RxHttp "RxHttp")有感，发现请求三部曲非常棒，能做到上手成本低，功能全，于是乎有感而作！
+本项目一直是个人自用网络请求库。之前未尝试单独剥离出来。观摩了 [RxHttp](https://github.com/liujingxing/okhttp-RxHttp "RxHttp")，[RxHttpUtils](https://github.com/lygttpod/RxHttpUtils) ，[RxHttpUtils](https://github.com/lygttpod/RxHttpUtils) 等前辈的源码，他们在实现上各有千秋，本人取其精华，有感而作。
+能力有限，欢迎有更好的实现方式的一起交流探讨！
+
+> 更多功能，请下载Demo体验
+
+### 联系
+G-Emali:huicunjun@gmail.com
+QQ:1214585092
+Wechat:wxid508133793
