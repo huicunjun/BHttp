@@ -137,8 +137,7 @@ implementation 'com.google.code.gson:gson:2.8.6' //必须
 > 更多功能，请下载Demo体验
 
 ### 联系
-```html
-Emali:huicunjun@gmail.com
-Wechat:wxid508133793
-```
+#### Emali:huicunjun@gmail.com
+#### Wechat:wxid508133793
+
 
