@@ -95,13 +95,13 @@ class KotlinProcessor : AbstractProcessor() {
         val defaultDomainSet = roundEnv.getElementsAnnotatedWith(DefaultDomain::class.java)
         defaultDomainSet.forEach {
             val typeElement = it as VariableElement
-           val toString = typeElement.simpleName.toString()
+            val toString = typeElement.simpleName.toString()
             //typeElement.g
-           // typeElement.
-          // defaultDomain = "${typeElement.qualifiedName.toString()}.${typeElement.simpleName.toString()}"
+            // typeElement.
+            // defaultDomain = "${typeElement.qualifiedName.toString()}.${typeElement.simpleName.toString()}"
             println("toString")
             println(toString)
-           // println( ClassName.get(typeElement.enclosingElement.asType()))
+            // println( ClassName.get(typeElement.enclosingElement.asType()))
             println(typeElement.enclosingElement.asType())
             defaultDomain = "${typeElement.enclosingElement.asType()}.${toString}"
         }
@@ -138,21 +138,23 @@ class KotlinProcessor : AbstractProcessor() {
     companion object {
         var defaultDomain = "null" //如Url.domaun
 
-        var asResponseFullName = "MyResponse"
+        var asResponseFullName = ""
         var asResponseMethodName = "asResponse"
 
         var className = "BHttp"
         var packname = "com.bhttp.wrapper.generator"
         private fun replaceClass(ss: String): String {
-            return ss.replace("BaseBHttp", "$className")
+            var sss =  ss.replace("BaseBHttp", "$className")
                 .replace("package com.ldw.bhttp;", "package $packname;")
-                .replace("import com.ldw.bhttp.entry.MyResponse;", "")
-                .replace("MyResponse", asResponseFullName)
                 .replace("setDefaultDomain(null);", "setDefaultDomain($defaultDomain);")
-                .replace("asResponse", "as$asResponseMethodName")
-        }
 
-        // var data = SimpleDateFormat().format("yyyy/MM/dd HH:ss")//2020/5/26 19:10
+            if (asResponseFullName.isNotEmpty()){
+                sss = sss.replace("import com.ldw.bhttp.entry.MyResponse;", "")
+                    .replace("MyResponse", asResponseFullName)
+                    .replace("asResponse", "as$asResponseMethodName")
+            }
+            return sss
+        }
         var ss = """
             
 package com.ldw.bhttp;
