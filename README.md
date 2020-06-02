@@ -138,6 +138,5 @@ implementation 'com.google.code.gson:gson:2.8.6' //必须
 
 ### 联系
 Emali:huicunjun@gmail.com
-Wechat:
-![image](https://github.com/huicunjun/BHttp/blob/master/screen/wechat.jpg) 
+Wechat:wxid508133793
 
