@@ -302,6 +302,7 @@ public class BaseBHttp<T> {
         client.param.setParamType(ParamType.Json);
         return client;
     }
+
     @NotNull
     public static BaseBHttp<?> postPath(String url) {
         BaseBHttp<?> client = new BaseBHttp<>();
@@ -310,6 +311,7 @@ public class BaseBHttp<T> {
         client.param.setParamType(ParamType.Path);
         return client;
     }
+
     @NotNull
     public static BaseBHttp<?> putFrom(@NotNull String s) {
         BaseBHttp<?> client = new BaseBHttp<>();
@@ -327,6 +329,7 @@ public class BaseBHttp<T> {
         client.param.setParamType(ParamType.Json);
         return client;
     }
+
     @NotNull
     public static BaseBHttp<?> putPath(String url) {
         BaseBHttp<?> client = new BaseBHttp<>();
@@ -353,6 +356,7 @@ public class BaseBHttp<T> {
         client.param.setParamType(ParamType.Json);
         return client;
     }
+
     @NotNull
     public static BaseBHttp<?> deletePath(String url) {
         BaseBHttp<?> client = new BaseBHttp<>();
@@ -379,6 +383,7 @@ public class BaseBHttp<T> {
         client.param.setParamType(ParamType.Json);
         return client;
     }
+
     @NotNull
     public static BaseBHttp<?> patchPath(String url) {
         BaseBHttp<?> client = new BaseBHttp<>();
@@ -387,6 +392,7 @@ public class BaseBHttp<T> {
         client.param.setParamType(ParamType.Path);
         return client;
     }
+
     @NotNull
     public static BaseBHttp<?> get(String url) {
         BaseBHttp<?> client = new BaseBHttp<>();
@@ -669,7 +675,7 @@ public class BaseBHttp<T> {
     }
 
     @SuppressWarnings("unchecked")
-    private T convert(String s, Type returnType, Class<?> tClass) {
+    private T convert(String s, Type returnType, Class<?> tClass) throws Exception {
         LogUtils.logd("请求结果：");
         LogUtils.logd(s);
         T convert = null;
@@ -683,7 +689,11 @@ public class BaseBHttp<T> {
             } else
                 convert = (T) new Gson().fromJson(s, tClass);
         }
-        return convert;
+        if (convert != null) {
+            return convert;
+        }
+        throw new Exception("数据为空");
+        //   return convert;
     }
 
     private Handler handler = new Handler(Looper.getMainLooper(), msg -> {

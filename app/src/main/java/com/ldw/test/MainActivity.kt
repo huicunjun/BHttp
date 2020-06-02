@@ -25,9 +25,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun get(view: View) {
-        for (i in 0..2) {
-            BHttp.create(ApiService::class.java)
-                .test("666")
+        for (i in 0..0) {
+            BHttp.get("https://v1.jinrishici.com/all.json")
+                .asString()
                 .to(this)
                 .subscribe({
                     ed.append(it.toString())

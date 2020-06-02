@@ -40,11 +40,9 @@ class DefaultFragment : Fragment() {
 
     fun get() {
         for (i in 0..0) {
-            BHttp.get("test")
-                .add("id", "1")
-                .add("pass", "2")
-                .to(this)
+            BHttp.get("https://v1.jinrishici.com/all.json")
                 .asString()
+                .to(this)
                 .subscribe({
                     ed.append(it.toString())
                 }, {
