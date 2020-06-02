@@ -37,7 +37,7 @@ compileOptions {
 
 implementation 'com.github.huicunjun:BHttp:0.7'//BHttp核心依赖库
 annotationProcessor 'com.github.huicunjun:bhttp-compiler:0.7'//Bhttp生成库 kotlin项目请使用kapt
-implementation 'com.github.huicunjun:bhttp-annotation:0.2'//BHttp注解库
+implementation 'com.github.huicunjun:bhttp-annotation:0.4'//BHttp注解库
 
 implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.7.2'//必须
 implementation 'com.google.code.gson:gson:2.8.6' //必须
