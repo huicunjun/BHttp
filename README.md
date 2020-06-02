@@ -21,7 +21,7 @@
  [![](https://jitpack.io/v/huicunjun/BHttp.svg)](https://jitpack.io/#huicunjun/BHttp)
 ### 1.  Gradle依赖
 
-```html
+```groovy
 allprojects {
     repositories {
         google()
@@ -44,20 +44,28 @@ implementation 'com.google.code.gson:gson:2.8.6' //必须
 ```
 ### 2.  初始化BHttp
 
-```html
+```java
         BHttp.setDebug(true);//开启debug 打印网络请求日志
         BHttp.init(okHttpClient);//可根据需要传入开发者的okHttpClient  非必须
 
-        在您的域名常量使用注解方式声明
+        //在您的域名常量使用注解方式声明
         public class Url {
             @DefaultDomain
-            public static String  host = "http://gdptdad.com";
+            public static String  host = "https://gdptdad.com";
+        }
+
+        //在您的统一返回Response实体类添加@AsResponse注解
+        @AsResponse
+        public class Response<D> {
+            public int code;
+            public String msg;
+            public D data;
         }
 
 ```
 ### 3.  Retrofit式调用
 
-```html
+```java
         public interface ApiService {
             @GET("http://192.168.1.3:8022//test/")
             BHttp<Response<String>> test(@Query(value = "id",encoded = true) String id);
@@ -75,7 +83,7 @@ implementation 'com.google.code.gson:gson:2.8.6' //必须
 ```
 
 ### 4.  链式调用
-```html
+```java
        BHttp.postJson("login")
                 .add("id","123")
                 .to(this)//监听生命周期，页面销毁自动结束请求
@@ -88,7 +96,7 @@ implementation 'com.google.code.gson:gson:2.8.6' //必须
 
 ```
 ### 5.  监听请求所有状态
-```html
+```java
       BHttp.create(ApiService.class)
                 .test("hello")
                 .to(this)//监听生命周期，页面销毁自动结束请求
@@ -115,7 +123,12 @@ implementation 'com.google.code.gson:gson:2.8.6' //必须
                 });
 
 ```
-  
+### 7.  优点  
+参考Retrofit源码，相比于Retrofit,完全可以替代，更多的是Api写法上的超越。参考RXjava源码，相对于Rxjava，实现了基本的subscribe，线程切换，链式回调。
+
+### 8.  缺点  
+还未实现RxJava的流式操作，所以对于多条并行的请求，一个请求依赖另一个请求结果的，得回调地狱了！无线套娃。
+
                 
 ### 关于项目
 本项目一直是个人自用网络请求库。之前未尝试单独剥离出来。观摩了 [RxHttp](https://github.com/liujingxing/okhttp-RxHttp "RxHttp")有感，发现请求三部曲非常棒，能做到上手成本低，功能全，于是乎有感而作！
