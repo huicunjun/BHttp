@@ -171,6 +171,8 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleEventObserver;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.ldw.bhttp.ParameterizedTypeImpl;
 import com.ldw.bhttp.annotation.Form;
@@ -675,7 +677,7 @@ public class BaseBHttp<T> {
     }
 
     @SuppressWarnings("unchecked")
-    private T convert(String s, Type returnType, Class<?> tClass) throws Exception {
+    private T convert(String s, Type returnType, Class<?> tClass) throws JsonSyntaxException {
         LogUtils.logd("请求结果：");
         LogUtils.logd(s);
         T convert = null;
@@ -692,7 +694,7 @@ public class BaseBHttp<T> {
         if (convert != null) {
             return convert;
         }
-        throw new Exception("数据为空");
+        throw new JsonSyntaxException("Json解析数据异常");
         //   return convert;
     }
 
@@ -704,7 +706,7 @@ public class BaseBHttp<T> {
     });
 
 }
-            
+     
             
             
         """.trimIndent()
