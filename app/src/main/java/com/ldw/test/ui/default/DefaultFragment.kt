@@ -41,6 +41,7 @@ class DefaultFragment : Fragment() {
     fun get() {
         for (i in 0..0) {
             BHttp.get("https://v1.jinrishici.com/all.json")
+                .addEncode("k","v")
                 .asString()
                 .to(this)
                 .subscribe({

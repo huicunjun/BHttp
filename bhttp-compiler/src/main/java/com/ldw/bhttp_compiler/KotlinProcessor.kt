@@ -157,6 +157,7 @@ class KotlinProcessor : AbstractProcessor() {
         }
         var ss = """
             
+
 package com.ldw.bhttp;
 
 import android.app.Activity;
@@ -232,6 +233,8 @@ public class BaseBHttp<T> {
     private static final int state_cancel = 1;
     private static final int MSG_ON_DESTROY = 666;
     private Class<?> tClass;
+    private boolean cache;
+    private String cacheKey;
 
     private static OkHttpClient getOkHttpClient() {
         if (okHttpClient == null) {
@@ -289,124 +292,108 @@ public class BaseBHttp<T> {
     //###########################################请求方法相关#################################################################
     @NotNull
     public static BaseBHttp<?> postFrom(@NotNull String s) {
-        BaseBHttp<?> client = new BaseBHttp<>();
-        client.param.setUrl(s);
-        client.param.setMethod(com.ldw.bhttp.param.Method.POST);
-        client.param.setParamType(ParamType.Form);
-        return client;
+        return buildBaseParam(s, com.ldw.bhttp.param.Method.POST, ParamType.Form);
     }
 
     @NotNull
     public static BaseBHttp<?> postJson(String url) {
-        BaseBHttp<?> client = new BaseBHttp<>();
-        client.param.setUrl(url);
-        client.param.setMethod(com.ldw.bhttp.param.Method.POST);
-        client.param.setParamType(ParamType.Json);
-        return client;
+        return buildBaseParam(url, com.ldw.bhttp.param.Method.POST, ParamType.Json);
     }
 
     @NotNull
     public static BaseBHttp<?> postPath(String url) {
-        BaseBHttp<?> client = new BaseBHttp<>();
-        client.param.setUrl(url);
-        client.param.setMethod(com.ldw.bhttp.param.Method.POST);
-        client.param.setParamType(ParamType.Path);
-        return client;
+        return buildBaseParam(url, com.ldw.bhttp.param.Method.POST, ParamType.Path);
     }
 
     @NotNull
     public static BaseBHttp<?> putFrom(@NotNull String s) {
-        BaseBHttp<?> client = new BaseBHttp<>();
-        client.param.setUrl(s);
-        client.param.setMethod(com.ldw.bhttp.param.Method.PUT);
-        client.param.setParamType(ParamType.Form);
-        return client;
+        return buildBaseParam(s, com.ldw.bhttp.param.Method.PUT, ParamType.Form);
     }
 
     @NotNull
     public static BaseBHttp<?> putJson(String url) {
-        BaseBHttp<?> client = new BaseBHttp<>();
-        client.param.setUrl(url);
-        client.param.setMethod(com.ldw.bhttp.param.Method.PUT);
-        client.param.setParamType(ParamType.Json);
-        return client;
+        return buildBaseParam(url, com.ldw.bhttp.param.Method.PUT, ParamType.Json);
     }
 
     @NotNull
     public static BaseBHttp<?> putPath(String url) {
-        BaseBHttp<?> client = new BaseBHttp<>();
-        client.param.setUrl(url);
-        client.param.setMethod(com.ldw.bhttp.param.Method.PUT);
-        client.param.setParamType(ParamType.Path);
-        return client;
+        return buildBaseParam(url, com.ldw.bhttp.param.Method.PUT, ParamType.Path);
     }
 
     @NotNull
     public static BaseBHttp<?> deleteFrom(@NotNull String s) {
-        BaseBHttp<?> client = new BaseBHttp<>();
-        client.param.setUrl(s);
-        client.param.setMethod(com.ldw.bhttp.param.Method.DELETE);
-        client.param.setParamType(ParamType.Form);
-        return client;
+        return buildBaseParam(s, com.ldw.bhttp.param.Method.DELETE, ParamType.Form);
     }
 
     @NotNull
     public static BaseBHttp<?> deleteJson(String url) {
-        BaseBHttp<?> client = new BaseBHttp<>();
-        client.param.setUrl(url);
-        client.param.setMethod(com.ldw.bhttp.param.Method.DELETE);
-        client.param.setParamType(ParamType.Json);
-        return client;
+        return buildBaseParam(url, com.ldw.bhttp.param.Method.DELETE, ParamType.Json);
     }
 
     @NotNull
     public static BaseBHttp<?> deletePath(String url) {
-        BaseBHttp<?> client = new BaseBHttp<>();
-        client.param.setUrl(url);
-        client.param.setMethod(com.ldw.bhttp.param.Method.DELETE);
-        client.param.setParamType(ParamType.Path);
-        return client;
+        return buildBaseParam(url, com.ldw.bhttp.param.Method.DELETE, ParamType.Path);
     }
 
     @NotNull
     public static BaseBHttp<?> patchFrom(@NotNull String s) {
-        BaseBHttp<?> client = new BaseBHttp<>();
-        client.param.setUrl(s);
-        client.param.setMethod(com.ldw.bhttp.param.Method.PATCH);
-        client.param.setParamType(ParamType.Form);
+        return buildBaseParam(s, com.ldw.bhttp.param.Method.PATCH, ParamType.Form);
+    }
+
+
+    @NotNull
+    public static BaseBHttp<?> patchFrom(@NotNull String url, Object... formatArgs) {
+        BaseBHttp<?> client = buildBaseParam(String.format(url, formatArgs), com.ldw.bhttp.param.Method.PATCH, ParamType.Form);
         return client;
     }
 
     @NotNull
     public static BaseBHttp<?> patchJson(String url) {
-        BaseBHttp<?> client = new BaseBHttp<>();
-        client.param.setUrl(url);
-        client.param.setMethod(com.ldw.bhttp.param.Method.PATCH);
-        client.param.setParamType(ParamType.Json);
-        return client;
+        return buildBaseParam(url, com.ldw.bhttp.param.Method.PATCH, ParamType.Json);
     }
 
     @NotNull
     public static BaseBHttp<?> patchPath(String url) {
-        BaseBHttp<?> client = new BaseBHttp<>();
-        client.param.setUrl(url);
-        client.param.setMethod(com.ldw.bhttp.param.Method.PATCH);
-        client.param.setParamType(ParamType.Path);
-        return client;
+        return buildBaseParam(url, com.ldw.bhttp.param.Method.PATCH, ParamType.Path);
     }
 
     @NotNull
     public static BaseBHttp<?> get(String url) {
+        return buildBaseParam(url, com.ldw.bhttp.param.Method.GET, ParamType.Query);
+    }
+
+    //使用标准的Java占位符协议 ，链接带有占位符的可以使用该方法
+    @NotNull
+    public static BaseBHttp<?> get(String url, Object... formatArgs) {
+        return buildBaseParam(String.format(url, formatArgs), com.ldw.bhttp.param.Method.GET, ParamType.Query);
+    }
+
+    @NotNull
+    private static BaseBHttp<?> buildBaseParam(@NotNull String s, com.ldw.bhttp.param.Method patch, ParamType form) {
         BaseBHttp<?> client = new BaseBHttp<>();
-        client.param.setUrl(url);
-        client.param.setMethod(com.ldw.bhttp.param.Method.GET);
+        client.param.setUrl(s);
+        client.param.setMethod(patch);
+        client.param.setParamType(form);
         return client;
     }
 
     @NotNull
     @SuppressWarnings("unchecked")
     public BaseBHttp<?> add(String k, Object v) {
-        param.add(k, v);
+        param.add(k, v, false);
+        return this;
+    }
+  /*  @NotNull
+    @SuppressWarnings("unchecked")
+    public BaseBHttp<?> addJsonString(String json) {
+        param.addJsonString(json);
+        return this;
+    }*/
+
+    @NotNull
+    @SuppressWarnings("unchecked")
+    public BaseBHttp<?> addEncode(String k, Object v) {
+        param.add(k, v, true);
         return this;
     }
 
@@ -434,8 +421,23 @@ public class BaseBHttp<T> {
         return (BaseBHttp<String>) this;
     }
 
-    //#############################################################################################################################
+    //##########################################################缓存相关方法###################################################################
+    @SuppressWarnings("unchecked")
+    public BaseBHttp<?> cache() {
+        cacheKey = param.getBaseUrl();
+        return cache(true);
+    }
 
+    public BaseBHttp<?> cache(boolean b) {
+        cache = b;
+        return this;
+    }
+
+    public BaseBHttp<?> cache(String key) {
+        cache = true;
+        cacheKey = key;
+        return this;
+    }
 
     //###########################################参数解析相关方法#################################################################
     @SuppressWarnings("unchecked")
@@ -706,9 +708,7 @@ public class BaseBHttp<T> {
     });
 
 }
-     
-            
-            
+
         """.trimIndent()
     }
 

@@ -4,6 +4,8 @@ package com.ldw.bhttp.param;
 import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -198,7 +200,16 @@ public class Param {
         hashMap.put(k, new ParameValue(k, v, isEncode));
     }
 
-/*    public <T> HttpSend<MyResponse<T>> asResponse(Class<T> tClass) {
+    public void addJsonString(String json) {
+        JsonElement jsonElement = JsonParser.parseString(json);
+        //  jsonElement
+    }
+
+    public String getBaseUrl() {
+        return getFinalUrl();
+    }
+
+    /*    public <T> HttpSend<MyResponse<T>> asResponse(Class<T> tClass) {
         HttpSend<MyResponse<T>> httpSend = new HttpSend<MyResponse<T>>();
         return httpSend;
     }

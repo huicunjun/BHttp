@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun postFrom(view: View) {
+    fun  postFrom(view: View) {
         for (i in 0..0) {
             BHttp.postFrom("http://gdptdad.com:8080/api/user/login")
                 .add("identifier", "2")
