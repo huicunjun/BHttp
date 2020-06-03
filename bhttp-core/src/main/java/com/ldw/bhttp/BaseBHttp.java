@@ -247,7 +247,14 @@ public class BaseBHttp<T> {
     @NotNull
     @SuppressWarnings("unchecked")
     public BaseBHttp<?> add(String k, Object v) {
-        param.add(k, v);
+        param.add(k, v,false);
+        return this;
+    }
+
+    @NotNull
+    @SuppressWarnings("unchecked")
+    public BaseBHttp<?> addEncode(String k, Object v) {
+        param.add(k, v, true);
         return this;
     }
 
