@@ -1,4 +1,4 @@
-package com.ldw.bhttp.compiler
+package com.ldw.bhttp_compiler
 
 import com.ldw.bhttp_annotation.DefaultDomain
 import com.ldw.bhttp_annotation.Parser
