@@ -83,44 +83,39 @@ implementation 'com.google.code.gson:gson:2.8.6' //必须
 ```
 
 ### 4.  链式调用
-```java
-       BHttp.postJson("login")
-                .add("id","123")
-                .to(this)//监听生命周期，页面销毁自动结束请求
-                .asResponse(String.class)
-                .subscribe(stringResponse -> {
-                   //请求完成回调，这里是主线程，直接UI操作
-                 }, throwable -> {
-                   //请求时出现错误回调，这里是主线程        
-                 });
+```kotlin
+           BHttp.postJson("login")
+                    .add("id","123")
+                    .add("pass","666")
+                    .to(this)//监听生命周期，页面销毁自动结束请求
+                    .asResponse(Student.class)
+                    .subscribe({
+                       //请求完成回调，这里是主线程，直接UI操作
+                    }, {
+                         //请求时出现错误回调，这里是主线程        
+                    })
+               
 
 ```
 ### 5.  监听请求所有状态
-```java
-      BHttp.create(ApiService.class)
-                .test("hello")
-                .to(this)//监听生命周期，页面销毁自动结束请求
-                .subscribe(new Observer<Response<String>>() {
-                    @Override
-                    public void onSubscribe() {
-                        //请求前执行的逻辑，这里是主线程
-                    }
-
-                    @Override
-                    public void onNext(@NonNull Response<String> stringResponse) {
-                        //请求完成回调，这里是主线程，直接UI操作
-                    }
-
-                    @Override
-                    public void onError(@NonNull Throwable e1) {
-                        //请求时出现错误回调，这里是主线程
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        //请求结束回调，这里是主线程（不管失败与否，最终都会执行改方法！）
-                    }
-                });
+```kotlin
+      BHttp.create(ApiService::class.java)
+                  .login("123","666")
+                  .to(this) //监听生命周期，页面销毁自动结束请求
+                  .subscribe(object : Observer<MySimpleResponse<String?>?> {
+                      override fun onSubscribe() {
+                          //请求前执行的逻辑，这里是主线程
+                      }
+                      override fun onNext(t: MySimpleResponse<String?>) { 
+                           //请求完成回调，这里是主线程，直接UI操作
+                      }
+                      override fun onError(e1: Throwable) {
+                          //请求时出现错误回调，这里是主线程
+                      }
+                      override fun onComplete() {
+                          //请求结束回调，这里是主线程（不管失败与否，最终都会执行改方法！）
+                      }
+                  })
 
 ```
 ### 7.  优点  

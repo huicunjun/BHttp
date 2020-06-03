@@ -6,12 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.bhttp.wrapper.generator.BHttp
+import com.ldw.bhttp.callback.Observer
 import com.ldw.test.ApiService
+import com.ldw.test.MySimpleResponse
 import com.ldw.test.R
-import com.ldw.test.Student
 import com.ldw.test.bean.Banner
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlin.text.clear
+import okhttp3.Response
+
 
 class DefaultFragment : Fragment() {
 
@@ -27,7 +29,7 @@ class DefaultFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-       // BHttp.setDefaultDomain("http://192.168.1.2:8022/")
+        // BHttp.setDefaultDomain("http://192.168.1.2:8022/")
         BHttp.setDebug(true)
         get.setOnClickListener {
             get()
@@ -39,9 +41,10 @@ class DefaultFragment : Fragment() {
     }
 
     fun get() {
+
         for (i in 0..0) {
             BHttp.get("https://v1.jinrishici.com/all.json")
-                .addEncode("k","v")
+                .addEncode("k", "v")
                 .asString()
                 .to(this)
                 .subscribe({
@@ -61,7 +64,7 @@ class DefaultFragment : Fragment() {
                 .to(this)
                 .asObject(Banner::class.java)
                 .subscribe({
-                    ed.append(it.toString())
+                    ed.append(it.img)
                     //ed.append(it.img.toString())
                 }, {
                     ed.append(it.message.toString())
