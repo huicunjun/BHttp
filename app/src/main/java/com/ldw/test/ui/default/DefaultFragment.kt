@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.bhttp.wrapper.generator.BHttp
 import com.ldw.bhttp.callback.Observer
 import com.ldw.test.ApiService
@@ -16,7 +17,7 @@ import okhttp3.Response
 
 
 class DefaultFragment : Fragment() {
-
+    private lateinit var defaultViewModel: DefaultViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,6 +31,8 @@ class DefaultFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // BHttp.setDefaultDomain("http://192.168.1.2:8022/")
+        defaultViewModel = ViewModelProvider(this).get(DefaultViewModel::class.java)
+       // defaultViewModel.mediatorLiveData.addSource()
         BHttp.setDebug(true)
         get.setOnClickListener {
             get()

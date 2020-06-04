@@ -157,7 +157,6 @@ class KotlinProcessor : AbstractProcessor() {
         }
         var ss = """
             
-
 package com.ldw.bhttp;
 
 import android.app.Activity;
@@ -448,7 +447,6 @@ public class BaseBHttp<T> {
                     Type returnType = method.getGenericReturnType();
                     BaseBHttp<?> result = serviceMethodCache.get(method);
                     if (result != null) {
-                        LogUtils.logd("缓存读取");
                         result.reLoadParam(method, args);
                         return result;
                     }
@@ -708,7 +706,9 @@ public class BaseBHttp<T> {
     });
 
 }
-
+       
+            
+            
         """.trimIndent()
     }
 
