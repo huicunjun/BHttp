@@ -32,7 +32,7 @@ class DefaultFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         // BHttp.setDefaultDomain("http://192.168.1.2:8022/")
         defaultViewModel = ViewModelProvider(this).get(DefaultViewModel::class.java)
-       // defaultViewModel.mediatorLiveData.addSource()
+       //defaultViewModel.mediatorLiveData.addSource()
         BHttp.setDebug(true)
         get.setOnClickListener {
             get()

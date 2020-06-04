@@ -35,8 +35,8 @@ compileOptions {
     targetCompatibility JavaVersion.VERSION_1_8
 }
 
-implementation 'com.github.huicunjun:BHttp:0.7'//BHttp核心依赖库
-annotationProcessor 'com.github.huicunjun:bhttp-compiler:0.7'//Bhttp生成库 kotlin项目请使用kapt
+implementation 'com.github.huicunjun:BHttp:1.2'//BHttp核心依赖库
+annotationProcessor 'com.github.huicunjun:bhttp-compiler:1.2'//Bhttp生成库 kotlin项目请使用kapt
 implementation 'com.github.huicunjun:bhttp-annotation:0.4'//BHttp注解库
 
 implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.7.2'//必须
