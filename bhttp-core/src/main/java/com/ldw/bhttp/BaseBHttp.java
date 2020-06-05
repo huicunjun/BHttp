@@ -78,7 +78,11 @@ public class BaseBHttp<T> {
 
     private static OkHttpClient getOkHttpClient() {
         if (okHttpClient == null) {
-            okHttpClient = getDefaultOkHttpClient();
+            synchronized (BaseBHttp.class){
+                if (okHttpClient==null){
+                    okHttpClient = getDefaultOkHttpClient();
+                }
+            }
         }
         return okHttpClient;
     }

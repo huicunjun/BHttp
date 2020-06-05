@@ -1,5 +1,6 @@
 package com.ldw.bhttp_compiler
 
+import com.ldw.bhttp_annotation.AsResponse
 import com.ldw.bhttp_annotation.DefaultDomain
 import com.ldw.bhttp_annotation.Parser
 import com.squareup.javapoet.JavaFile
@@ -77,10 +78,10 @@ class KotlinProcessor : AbstractProcessor() {
     }
 
     private fun createByString(roundEnv: RoundEnvironment) {
-        roundEnv.getElementsAnnotatedWith(Parser::class.java).forEach {
+        roundEnv.getElementsAnnotatedWith(AsResponse::class.java).forEach {
             val typeElement = it as TypeElement
             // asResponseName = typeElement.simpleName.toString()
-            val annotation = typeElement.getAnnotation(Parser::class.java)
+            val annotation = typeElement.getAnnotation(AsResponse::class.java)
             val name: String = annotation.name
             asResponseFullName = typeElement.qualifiedName.toString()
             asResponseMethodName = typeElement.simpleName.toString()
@@ -132,6 +133,7 @@ class KotlinProcessor : AbstractProcessor() {
             HashSet()
         annotations.add(DefaultDomain::class.java.canonicalName)
         annotations.add(Parser::class.java.canonicalName)
+        annotations.add(AsResponse::class.java.canonicalName)
         return annotations
     }
 
