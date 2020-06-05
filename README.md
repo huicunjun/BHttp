@@ -134,6 +134,6 @@ implementation 'com.google.code.gson:gson:2.8.6' //必须
 ### 联系
 #### Emali:huicunjun@gmail.com
 #### QQ:1214585092
-#### Wechat:wxid508133793
+#### Wechat:huicunjun9527
 
 
