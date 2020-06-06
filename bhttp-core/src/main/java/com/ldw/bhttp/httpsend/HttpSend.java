@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 
 import com.ldw.bhttp.callback.Consumer;
 import com.ldw.bhttp.callback.Observer;
-import com.ldw.bhttp.param.Param;
+import com.ldw.bhttp.param.SimpleParam;
 import com.ldw.bhttp.parse.Parse;
 import com.ldw.bhttp.utils.LogUtils;
 
@@ -28,7 +28,7 @@ import okhttp3.Response;
  */
 public class HttpSend<T> {
     private static OkHttpClient okHttpClient = null;
-    Param param = new Param();
+    SimpleParam simpleParam = new SimpleParam();
     Call call;
     private int state = 0;
     private static final int state_OK = 0;
@@ -47,7 +47,7 @@ public class HttpSend<T> {
     }
 
     public void subscribe(Consumer<T> onNext, Consumer<? super Throwable> onError) {
-        call = getOkHttpClient().newCall(param.getRequest());
+        call = getOkHttpClient().newCall(simpleParam.getRequest());
         if (state == state_OK) {
             call.enqueue(new Callback() {
                 @Override
@@ -89,7 +89,7 @@ public class HttpSend<T> {
     public void subscribe(final Observer<T> observer) {
         //parse = new Parse<>(method);
         observer.onSubscribe();
-        call = getOkHttpClient().newCall(param.getRequest());
+        call = getOkHttpClient().newCall(simpleParam.getRequest());
         if (state == state_OK) {
             call.enqueue(new Callback() {
                 @Override

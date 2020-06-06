@@ -5,16 +5,17 @@ import java.util.Objects;
 import okhttp3.FormBody;
 import okhttp3.HttpUrl;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 
 /**
- * @date 2020/5/28 19:30
+ * @date 2020/6/6 10:59
  * @user 威威君
  */
-public class FormParam extends IRequest {
+public class QueryParam extends IRequest {
+    public QueryParam(String url, Method method) {
+        super(url, method, ParamType.Query);
+    }
 
-    public FormParam(String url, Method method) {
-        super(url, method, ParamType.Form);
+    public QueryParam() {
     }
 
     @Override

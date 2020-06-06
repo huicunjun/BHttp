@@ -148,7 +148,7 @@ class KotlinProcessor : AbstractProcessor() {
         private fun replaceClass(ss: String): String {
             var sss =  ss.replace("BaseBHttp", "$className")
                 .replace("package com.ldw.bhttp;", "package $packname;")
-                .replace("setDefaultDomain(null);", "setDefaultDomain($defaultDomain);")
+                .replace("private static String defaultDomain", "private static String defaultDomain = $defaultDomain")
 
             if (asResponseFullName.isNotEmpty()){
                 sss = sss.replace("import com.ldw.bhttp.entry.MyResponse;", "")
@@ -165,18 +165,15 @@ import android.app.Activity;
 import android.os.Handler;
 import android.os.Looper;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleEventObserver;
-
+import com.ldw.bhttp.ParameterizedTypeImpl;
 import com.google.gson.Gson;
-import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
-import com.ldw.bhttp.ParameterizedTypeImpl;
 import com.ldw.bhttp.annotation.Form;
 import com.ldw.bhttp.annotation.GET;
 import com.ldw.bhttp.annotation.Json;
@@ -187,8 +184,13 @@ import com.ldw.bhttp.annotation.Query;
 import com.ldw.bhttp.callback.Consumer;
 import com.ldw.bhttp.callback.Observer;
 import com.ldw.bhttp.entry.MyResponse;
-import com.ldw.bhttp.param.Param;
+import com.ldw.bhttp.param.FormParam;
+import com.ldw.bhttp.param.IRequest;
+import com.ldw.bhttp.param.JsonParam;
+import com.ldw.bhttp.param.SimpleParam;
 import com.ldw.bhttp.param.ParamType;
+import com.ldw.bhttp.param.PathParam;
+import com.ldw.bhttp.param.QueryParam;
 import com.ldw.bhttp.parse.Parse;
 import com.ldw.bhttp.ssl.SSLSocketFactoryImpl;
 import com.ldw.bhttp.ssl.X509TrustManagerImpl;
@@ -198,7 +200,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Proxy;
@@ -225,7 +226,7 @@ public class BaseBHttp<T> {
     // private static LinkedHashMap<String, Object> hashMap = new LinkedHashMap<>();
     private static final Map<Method, BaseBHttp<?>> serviceMethodCache = new ConcurrentHashMap<>();
     private static OkHttpClient okHttpClient = null;
-    private Param param = new Param();
+    private IRequest param;
     private Parse<?> parse;
     private Call call;
     private Type returnType;
@@ -236,10 +237,15 @@ public class BaseBHttp<T> {
     private Class<?> tClass;
     private boolean cache;
     private String cacheKey;
+    private static String defaultDomain;
 
     private static OkHttpClient getOkHttpClient() {
         if (okHttpClient == null) {
-            okHttpClient = getDefaultOkHttpClient();
+            synchronized (BaseBHttp.class) {
+                if (okHttpClient == null) {
+                    okHttpClient = getDefaultOkHttpClient();
+                }
+            }
         }
         return okHttpClient;
     }
@@ -273,109 +279,96 @@ public class BaseBHttp<T> {
     }
 
     public static void setDefaultDomain(String s) {
-        Param.setDefaultDomain(s);
+        defaultDomain = s;
     }
 
-    public Param getParam() {
-        return param;
+    public BaseBHttp(Method method, Object[] args) {
+        param = new SimpleParam();
+        param.setDefaultDomain(defaultDomain);
+        loadService(method, args);
     }
 
-    public BaseBHttp(Method method, Object[] args, boolean isRetrofit) {
-        if (isRetrofit)
-            loadService(method, args);
-        setDefaultDomain(null);
-    }
-
-    public BaseBHttp() {
-        setDefaultDomain(null);
+    public BaseBHttp(IRequest request) {
+        param = request;
+        param.setDefaultDomain(defaultDomain);
     }
 
     //###########################################请求方法相关#################################################################
     @NotNull
-    public static BaseBHttp<?> postFrom(@NotNull String s) {
-        return buildBaseParam(s, com.ldw.bhttp.param.Method.POST, ParamType.Form);
+    public static BaseBHttp<?> postFrom(@NotNull String url) {
+        return new BaseBHttp(new FormParam(url, com.ldw.bhttp.param.Method.POST));
     }
 
     @NotNull
     public static BaseBHttp<?> postJson(String url) {
-        return buildBaseParam(url, com.ldw.bhttp.param.Method.POST, ParamType.Json);
+        return new BaseBHttp(new JsonParam(url, com.ldw.bhttp.param.Method.POST));
     }
 
     @NotNull
     public static BaseBHttp<?> postPath(String url) {
-        return buildBaseParam(url, com.ldw.bhttp.param.Method.POST, ParamType.Path);
+        return new BaseBHttp(new PathParam(url, com.ldw.bhttp.param.Method.POST));
     }
 
     @NotNull
-    public static BaseBHttp<?> putFrom(@NotNull String s) {
-        return buildBaseParam(s, com.ldw.bhttp.param.Method.PUT, ParamType.Form);
+    public static BaseBHttp<?> putFrom(@NotNull String url) {
+        return new BaseBHttp(new FormParam(url, com.ldw.bhttp.param.Method.PUT));
     }
 
     @NotNull
     public static BaseBHttp<?> putJson(String url) {
-        return buildBaseParam(url, com.ldw.bhttp.param.Method.PUT, ParamType.Json);
+        return new BaseBHttp(new JsonParam(url, com.ldw.bhttp.param.Method.PUT));
     }
 
     @NotNull
     public static BaseBHttp<?> putPath(String url) {
-        return buildBaseParam(url, com.ldw.bhttp.param.Method.PUT, ParamType.Path);
+        return new BaseBHttp(new PathParam(url, com.ldw.bhttp.param.Method.PUT));
     }
 
     @NotNull
-    public static BaseBHttp<?> deleteFrom(@NotNull String s) {
-        return buildBaseParam(s, com.ldw.bhttp.param.Method.DELETE, ParamType.Form);
+    public static BaseBHttp<?> deleteFrom(@NotNull String url) {
+        return new BaseBHttp(new FormParam(url, com.ldw.bhttp.param.Method.DELETE));
     }
 
     @NotNull
     public static BaseBHttp<?> deleteJson(String url) {
-        return buildBaseParam(url, com.ldw.bhttp.param.Method.DELETE, ParamType.Json);
+        return new BaseBHttp(new JsonParam(url, com.ldw.bhttp.param.Method.DELETE));
     }
 
     @NotNull
     public static BaseBHttp<?> deletePath(String url) {
-        return buildBaseParam(url, com.ldw.bhttp.param.Method.DELETE, ParamType.Path);
+        return new BaseBHttp(new PathParam(url, com.ldw.bhttp.param.Method.DELETE));
     }
 
     @NotNull
-    public static BaseBHttp<?> patchFrom(@NotNull String s) {
-        return buildBaseParam(s, com.ldw.bhttp.param.Method.PATCH, ParamType.Form);
+    public static BaseBHttp<?> patchFrom(@NotNull String url) {
+        return new BaseBHttp(new FormParam(url, com.ldw.bhttp.param.Method.PATCH));
     }
 
 
     @NotNull
     public static BaseBHttp<?> patchFrom(@NotNull String url, Object... formatArgs) {
-        BaseBHttp<?> client = buildBaseParam(String.format(url, formatArgs), com.ldw.bhttp.param.Method.PATCH, ParamType.Form);
-        return client;
+        return new BaseBHttp(new FormParam(String.format(url, formatArgs), com.ldw.bhttp.param.Method.PATCH));
     }
 
     @NotNull
     public static BaseBHttp<?> patchJson(String url) {
-        return buildBaseParam(url, com.ldw.bhttp.param.Method.PATCH, ParamType.Json);
+        return new BaseBHttp(new JsonParam(url, com.ldw.bhttp.param.Method.PATCH));
     }
 
     @NotNull
     public static BaseBHttp<?> patchPath(String url) {
-        return buildBaseParam(url, com.ldw.bhttp.param.Method.PATCH, ParamType.Path);
+        return new BaseBHttp(new PathParam(url, com.ldw.bhttp.param.Method.PATCH));
     }
 
     @NotNull
     public static BaseBHttp<?> get(String url) {
-        return buildBaseParam(url, com.ldw.bhttp.param.Method.GET, ParamType.Query);
+        return new BaseBHttp(new QueryParam(url, com.ldw.bhttp.param.Method.GET));
     }
 
     //使用标准的Java占位符协议 ，链接带有占位符的可以使用该方法
     @NotNull
     public static BaseBHttp<?> get(String url, Object... formatArgs) {
-        return buildBaseParam(String.format(url, formatArgs), com.ldw.bhttp.param.Method.GET, ParamType.Query);
-    }
-
-    @NotNull
-    private static BaseBHttp<?> buildBaseParam(@NotNull String s, com.ldw.bhttp.param.Method patch, ParamType form) {
-        BaseBHttp<?> client = new BaseBHttp<>();
-        client.param.setUrl(s);
-        client.param.setMethod(patch);
-        client.param.setParamType(form);
-        return client;
+        return new BaseBHttp(new QueryParam(String.format(url, formatArgs), com.ldw.bhttp.param.Method.GET));
     }
 
     @NotNull
@@ -401,7 +394,6 @@ public class BaseBHttp<T> {
     @NotNull
     @SuppressWarnings("unchecked")
     public <D> BaseBHttp<D> asObject(Class<D> tClass) {
-        // returnType = new TypeToken<D>() {}.getType();
         this.tClass = tClass;
         return (BaseBHttp<D>) this;
     }
@@ -425,7 +417,7 @@ public class BaseBHttp<T> {
     //##########################################################缓存相关方法###################################################################
     @SuppressWarnings("unchecked")
     public BaseBHttp<?> cache() {
-        cacheKey = param.getBaseUrl();
+        cacheKey = param.getFinalUrl();
         return cache(true);
     }
 
@@ -455,7 +447,7 @@ public class BaseBHttp<T> {
                     synchronized (serviceMethodCache) {
                         result = serviceMethodCache.get(method);
                         if (result == null) {
-                            result = new BaseBHttp(method, args, true);
+                            result = new BaseBHttp(method, args);
                             serviceMethodCache.put(method, result);
                         }
                     }
@@ -481,7 +473,6 @@ public class BaseBHttp<T> {
         Type rawType = parameterizedType.getRawType();
         returnType = actualTypeArguments[0];
         Annotation[] annotations = method.getAnnotations();
-        param = new Param();
         for (int i = 0; i < annotations.length; i++) {
             if (annotations[i] instanceof GET) {
                 parseHttpMethodAndPath(((GET) annotations[i]).value(), com.ldw.bhttp.param.Method.GET);
@@ -513,13 +504,13 @@ public class BaseBHttp<T> {
         }
     }
 
-    void parseHttpMethodAndPath(String value, com.ldw.bhttp.param.Method method) {
+    void parseHttpMethodAndPath(String url, com.ldw.bhttp.param.Method method) {
+        param.setUrl(url);
         param.setMethod(method);
-        param.setUrl(value);
     }
 
     private void reLoadParam(Method method, Object[] args) {
-        param.reload();
+        param.clear();
         Annotation[][] parameterAnnotations = method.getParameterAnnotations();
         for (int i = 0; i < parameterAnnotations.length; i++) {
             Annotation[] parameterAnnotation = parameterAnnotations[i];
@@ -708,9 +699,9 @@ public class BaseBHttp<T> {
     });
 
 }
-       
-            
-            
+
+
+
         """.trimIndent()
     }
 

@@ -75,7 +75,7 @@ class MainActivity : AppCompatActivity() {
     fun response(view: View) {
         for (i in 0..0) {
             //  BHttp.postJson("http://192.168.1.3:8022//test/asResponse")
-            BHttp.postFrom("http://gdptdad.com:8080/api/user/login")
+          /*  BHttp.postFrom("http://gdptdad.com:8080/api/user/login")
                 .add("identifier", "2")
                 .add("voucher", "2")
                 .asMySimpleResponse(LoginBean::class.java)
@@ -90,7 +90,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 ) {
                     ed.append(it.message.toString())
-                }
+                }*/
         }
     }
 
