@@ -3,8 +3,18 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 //apply from: "bintrayUpload.gradle"
 apply plugin: 'com.github.dcendents.android-maven'
-
 group='com.github.huicunjun'
+
+apply plugin: 'com.novoda.bintray-release'
+publish {
+    userOrg = 'huicunjun'
+    groupId = 'com.huicunjun'
+    artifactId = 'bhttp'
+    publishVersion = '1.0'
+    desc = '极简的http框架，不依赖Retrofit和Rxjava，但实现了Retrofit的声明式Api，以及Rxjava的链式调用线程切换， 功能涵盖请求缓存，请求加密，公共参数，自定义请求，自定义解析数据，全局统一错误处理等功能'
+    website = 'https://github.com/huicunjun/BHttp'
+}
+
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
@@ -46,8 +56,8 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.core:core-ktx:1.2.0'
-    testImplementation 'junit:junit:4.12'
+    implementation 'androidx.core:core-ktx:1.3.0'
+    testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
