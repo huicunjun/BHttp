@@ -122,7 +122,7 @@ implementation 'com.google.code.gson:gson:2.8.6' //必须
 参考Retrofit源码，相比于Retrofit,完全可以替代，更多的是Api写法上的超越。参考RXjava源码，相对于Rxjava，实现了基本的subscribe，线程切换，链式回调。
 
 ### 8.  缺点  
-还未实现RxJava的流式操作，所以对于多条并行的请求，一个请求依赖另一个请求结果的，得回调地狱了！无线套娃。
+还未实现RxJava的流式操作，所以对于多条并行的请求，一个请求依赖另一个请求结果的，得回调地狱了！无线套娃。后期打算封装Kotlin协程可以解决此问题。
 
                 
 ### 关于项目
